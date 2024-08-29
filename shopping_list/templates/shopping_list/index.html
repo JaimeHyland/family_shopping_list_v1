@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Shopping list</title>
+</head>
+<body>
+    Where are you going shopping?<br>
+    <input id="shop-input" type="text" size="100"><br>
+    <input id="shop-submit" type="button" value="Select a shop">
+
+    <script>
+        document.querySelector('#shop-input').focus();
+        document.querySelector('#shop-input').onkeyup = function(e) {
+            if (e.key === 'Go to shop') {  
+                document.querySelector('#shop-submit').click();
+            }
+        };
+
+        document.querySelector('#shop-submit').onclick = function(e) {
+            var shopName = document.querySelector('#shop-input').value;
+
+            window.location.pathname = '/shop/' + shopName + '/';
+        };
+    </script>
+</body>
+</html>
