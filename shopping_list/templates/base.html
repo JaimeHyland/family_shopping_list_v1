@@ -1,0 +1,260 @@
+{% load static %}
+{% url 'home' as home_url %}
+{% url 'account_login' as login_url %}
+{% url 'account_signup' as signup_url %}
+{% url 'account_logout' as logout_url %}
+
+
+<!DOCTYPE html>
+<html class="h-100" lang="en">
+
+<head>
+    <title>Hyland shopping list</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Customised CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'shopping_list/styles.css' %}">
+
+    <!-- Google Fonts CSS -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+</head>
+
+<body class="d-flex flex-column h-100 main-bg">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'shopping_list' %}"><span class="brand"><i
+                        class="fa fa-shopping-basket" aria-hidden="true"></i> The Shopping List App</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == home_url %}active{% endif %}" aria-current="page"
+                            href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == product_list_url %}active{% endif %}"
+                            aria-current="page" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == category_list_url %}active{% endif %}"
+                            aria-current="page" href="#">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == source_list_url %}active{% endif %}"
+                            aria-current="page" href="#">Sources</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
+                            href="{% url 'account_logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
+                            href="{% url 'account_login' %}">Login</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+                <span class="navbar-text text-muted">
+                    Hyland family shopping list
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-shrink-0 main-bg">
+
+        {% block content %}
+        <!-- Content Goes here -->
+        {% endblock content %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 dark-bg">
+        <p class="m-0 text-center text-white">Made by Code Instituters</p>
+        <p class="m-0 text-center text-white">Follow us: <i class="fab fa-facebook-square ms-3"></i>
+            <i class="fab fa-twitter-square ms-3"></i>
+            <i class="fab fa-instagram-square ms-3"></i>
+            <i class="fab fa-youtube-square ms-3"></i>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
+    </script>
+</body>
+
+<script>
+    // Change presentation of list item texts when user changes its status to cancelled or bought.
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
+        const completedChkbxs = document.querySelectorAll('.completed-chkbx');
+
+        cancelChkbxs.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const listItem = this.closest('.list-group-item');
+                const productText = listItem.querySelector('span');
+                const completedChkbx = listItem.querySelector('.completed-chkbx');
+
+                if (this.checked) {
+                    productText.classList.remove('bold-text');
+                    productText.classList.add('text-muted');
+                    completedChkbx.disabled = true;
+                } else {
+                    productText.classList.remove('text-muted');
+                    productText.classList.add('bold-text');
+                    completedChkbx.disabled = false;
+                }
+            });
+
+            if (checkbox.checked) {
+                const listItem = checkbox.closest('.list-group-item');
+                const completedChkbx = listItem.querySelector('.completed-chkbx');
+                completedChkbx.disabled = true;
+            }
+
+        });
+        completedChkbxs.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const listItem = this.closest('.list-group-item');
+                const productText = listItem.querySelector('span');
+                const cancelChkbx = listItem.querySelector('.cancel-chkbx');
+
+                if (this.checked) {
+                    productText.classList.add('bought-text');
+                    cancelChkbx.disabled = true;
+                } else {
+                    productText.classList.remove('bought-text');
+                    cancelChkbx.disabled = false;
+                }
+            });
+        });
+    });
+
+    function getCSRFToken() {
+        let name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue; 
+    }
+
+    function confirmCancelUncancel(checkbox, itemId) {
+        if (checkbox.checked == true) {
+            if (confirm("Are you sure you don't want this item bought at this time after all?")) {
+                checkbox.checked == true
+                updateDatabase(checkbox, itemId);
+            } else {
+                checkbox.checked == false;
+                updateDatabase(checkbox, itemId);
+            }
+        } else {
+            checkbox.checked == false;
+            updateDatabase(checkbox, itemId);
+        }
+    }
+
+    function updateDatabase(checkbox, itemId) {
+
+        let action;
+
+        if (checkbox.name === 'cancelled_item') {
+            action = checkbox.checked ? 'cancel' : 'uncancel';
+        } else {
+            action = checkbox.checked ? 'buy' : 'unbuy';
+        }
+        updateForm(itemId, action);
+        submitForm();
+    }
+
+    function submitForm() {
+        let form = document.getElementById("shopping-list-form");
+        let formData = new FormData(form); 
+        // Remove cancelled_item from formData
+        formData.delete('cancelled_item');
+        for (let [key, value] of formData.entries()) {
+        }
+
+        fetch(form.getAttribute('action'), {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+                
+            },  
+        })
+        
+        .then(response => {
+            if (response.ok) {
+                console.log('Form submitted successfully');
+            }
+            else {
+                console.error('Form submission failed', response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Form submission error', error);
+        });
+    }
+
+    function updateForm(itemId, action) {
+        document.getElementById('item-id').value = itemId;
+        document.getElementById('action-type').value = action;
+    }
+
+
+    // Check whether current location protocol is secure or not and define WebSocket protocol accordingly.
+
+    const wsProt = window.location.protocol === "https:" ? "wss" : "ws";
+
+    // Build the WebSocket URL.
+    const wsUrl = `${wsProt}://${window.location.host}/ws/shopping_list/`;
+
+    const socket = new WebSocket(wsUrl);
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log(data.message);
+        // Update the DOM with new data
+        if (data.message === 'Shopping list updated') {
+            location.reload();
+        }
+    };
+
+    socket.onerror = function(error) {
+        console.error('A WebSocket error has occurred: ',error);
+    }
+
+    // Function to send new data
+    function sendData(message) {
+        ws.send(JSON.stringify({'message': message}));
+    }
+</script>
+
+</html>

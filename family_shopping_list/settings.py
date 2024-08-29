@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-+nnp9*lc+*@&apzi5q+gie%m&i&0tw*ldji8_^ja$c+$#i6-r!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net']
+ALLOWED_HOSTS = ['8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
 
 CSRF_TRUSTED_ORIGINS = ['https://8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net']
 
@@ -36,6 +37,8 @@ INSTALLED_APPS = [
     'channels',
     'daphne',
     'shopping_list',
+    'cloudinary',
+    'django_summernote',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -85,12 +88,14 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.gitpod.io/",
+    "https://*.codeanyapp.com",
+    "https://*.herokuapp.com",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -135,3 +140,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Daphne
 ASGI_APPLICATION = "family_shopping_list.asgi.application"
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
+
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
