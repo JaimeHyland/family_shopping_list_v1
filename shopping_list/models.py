@@ -24,6 +24,9 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
+    class Meta:
+        verbose_name_plural = "categories"
+
 
 class Product(models.Model):
     product_name = models.CharField(max_length=50, null=False, blank=False)
@@ -54,6 +57,7 @@ class List_item(models.Model):
 
     class Meta:
         ordering = ['date_created']
+        verbose_name = "list item"
 
     def __str__(self):
         return self.product.product_name

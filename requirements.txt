@@ -3,11 +3,13 @@ autobahn==24.4.2
 Automat==24.8.1
 channels==4.1.0
 channels-redis==4.2.0
-cloudinary==1.41.0
+cloudinary==1.36.0
 constantly==23.10.4
 daphne==4.1.2
 dj-database-url==2.2.0
-Django==5.1
+dj3-cloudinary-storage==0.0.6
+Django==4.2.7
+django-bootstrap-v5==1.0.11
 django-summernote==0.8.20.0
 hyperlink==21.0.0
 incremental==24.7.2
@@ -22,4 +24,6 @@ service-identity==24.1.0
 sqlparse==0.5.1
 Twisted==24.7.0
 txaio==23.1.1
+urllib3==1.26.20
+whitenoise==5.3.0
 zope.interface==7.0.1

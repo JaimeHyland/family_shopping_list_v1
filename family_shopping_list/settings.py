@@ -16,13 +16,6 @@ import dj_database_url
 
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-
-CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
-
-SESSION_COOKIE_SECURE = False  # Ensure this is False for development, True for production
-CSRF_COOKIE_SECURE = False     # Same as above
-
 if os.path.isfile('env.py'):
     import env
 
@@ -41,16 +34,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net']
-
-
 # Application definition
 
 INSTALLED_APPS = [
     'channels',
     'daphne',
-    'shopping_list',
     'cloudinary',
+    'shopping_list',
     'django_summernote',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,10 +48,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,6 +95,7 @@ CHANNEL_LAYERS = {
 DATABASES = {'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))}
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://*.codeinstitute-ide.net",
     "https://*.gitpod.io/",
     "https://*.codeanyapp.com",
     "https://*.herokuapp.com",
@@ -143,6 +136,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
