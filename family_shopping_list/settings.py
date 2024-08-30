@@ -12,6 +12,19 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
+SESSION_COOKIE_SECURE = False  # Ensure this is False for development, True for production
+CSRF_COOKIE_SECURE = False     # Same as above
+
+if os.path.isfile('env.py'):
+    import env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +39,7 @@ SECRET_KEY = 'django-insecure-+nnp9*lc+*@&apzi5q+gie%m&i&0tw*ldji8_^ja$c+$#i6-r!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
 
 CSRF_TRUSTED_ORIGINS = ['https://8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net']
 
@@ -85,11 +98,9 @@ CHANNEL_LAYERS = {
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settings/#database
 
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
+DATABASES = {'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))}
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.gitpod.io/",
