@@ -1,8 +1,8 @@
 ---
 name: User Story Template
 about: This template is used to help the developer to set up User Stories on the Kanban
-title: 'User story: [title]'
-labels: ''
+title: 'USER STORY: [title]'
+labels: enhancement
 assignees: JaimeHyland
 
 ---
