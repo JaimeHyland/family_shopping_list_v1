@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="product-detail">
+    <h1>{{ product.product_name }}</h1>
+    <p><strong>Category:</strong> {{ product.category.name }}</p>
+    <p><strong>Default Quantity:</strong> {{ product.default_quantity }} {{ product.default_unit }}</p>
+    <p><strong>Default Source:</strong> {{ product.default_source.name }}</p>
+    <p><strong>Creator:</strong> {{ product.creator.username }}</p>
+    <p><strong>Notes:</strong> {{ product.notes }}</p>
+    <p><strong>Current:</strong> {{ product.current|yesno:"Yes,No" }}</p>
+</div>
+
+{% endblock %}

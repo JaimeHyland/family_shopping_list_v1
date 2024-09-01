@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-def index(request):
-    return render(request, "shopping_list/index.html")
+def shopping_list(request):
+    return render(request, "shopping_list/shopping_list.html")
 
 def shop(request, shop_name):
     context = {"shop_name": shop_name}

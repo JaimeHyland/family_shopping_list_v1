@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-12 mt-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="row">
+        <h1 class="mx-auto">Current shopping list</h1>
+      </div>
+      <div class="row">
+        <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
+          {% csrf_token %}
+          <!-- Input types to be dynamically defined in javascript and parsed as appropriate in the ShoppingListView.post() method -->
+          <input type="hidden" id="item-id" name="item_id" value="">
+          <input type="hidden" id="action-type" name="action" value="">
+          <ul class="list-group list-group-flush mx-lg-3">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <h4>Cancelled</h4>
+                <h4>Bought</h4>
+            </li>
+            {% for item in items %}
+            <li class="list-group-item d-flex justify-content-between align items center">
+              <div>
+                <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
+                  {% if item.cancelled %} checked {% endif %} onchange="confirmCancelUncancel(this, '{{ item.id }}')">
+                <div class="empty-block"></div>
+                <span class="{% if item.cancelled %}text-muted{% endif %}{% if not item.cancelled %}bold-text{% endif %}">
+                  <a class="link-success link-opacity-30-hover link-underline-opacity-10"
+                    href="{% url 'product_detail' item.product.slug %}">{{ item.product.product_name }}</a></span>
+              </div>
+              <div>
+                <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"
+                  {% if item.bought %} checked {% endif %} onchange="updateDatabase(this, '{{ item.id }}')">
+              </div>
+            </li>
+            {% endfor %}
+            <button type="submit">Refresh shopping list</button>
+            <button type="submit">Adjust shopping list filter</button>
+            <button type="submit">Add item to shopping list</button>
+          </ul>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

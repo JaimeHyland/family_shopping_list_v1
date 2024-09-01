@@ -18,7 +18,6 @@
     {{ shop_name|json_script:"shop-name" }}
     <script>
         const shopName = JSON.parse(document.getElementById('shop-name').textContent);
-        console.log("DEBUG: " + shopName)
         /* Set up the protocol depending on whether the site is using http or https */
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const chatSocket = new WebSocket(

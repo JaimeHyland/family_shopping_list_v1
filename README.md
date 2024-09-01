@@ -71,6 +71,11 @@ My reasons for choosing a django-based system on a Postgresql database at the ba
 - Django offers a seamless way of creating a simple full-stack website quickly and corresponding to the family's needs and habits.
 - The most obvious way of satisfying the requirements of my fourth portfolio project on my Code Institute Full-Stack Programming course was to use Django along with Bootstrap.
 
+### Authentication
+I decided that, since the authentication needs of the app are fairly standard, I would use Django-Allauth to handle authentication.
+
+I also decided that I would not require account verification via e-mail.
+
 <!-- TOC --><a name="the-database-structure"></a>
 ### The database structure
 
@@ -87,6 +92,10 @@ For the moment, the purpose of both these tables is simply to allow the user to 
 
 They also have the potential to expand to provide more information to the family members in future iterations of the App.
 
+![The basic design of the DB](/assets/documentation/shopping_list_database_schema.webp)
+
+*The basic design of the bespoke tables in the database*
+
 There are also two tables generic to Django:
 - User
 - Group
@@ -98,7 +107,7 @@ The purpose of the first of these from our point of view is to manage users and 
 ## The website's workflow:
 
 <!-- TOC --><a name="logging-in"></a>
-### Logging in
+### Authentication
 The first thing a user sees on navigating to the website is an login page. Nobody can get any further without logging in. Users can set the App to remember them (i.e. not to require a new log-in when a new instance of the App is started up on the same device). Once logged in, any user in either group should be able to see the full current shopping list in order of entry (oldest first).
 
 <!-- TOC --><a name="cancelling-list-items"></a>
@@ -152,6 +161,9 @@ Due to pressure of time (as a result of what was in hindsight an overambitious a
 <!-- TOC --><a name="bugs-and-debugging"></a>
 ### Bugs and debugging
 Bugs were fixed as they arose function-by-function during development as they arrived. A systematic iterative search for bugs followed by rounds of bugfixing activity has not been implemented. For this, as for all the other incomplete elements in this project, I can only apologise.
+
+#### Database debugging
+While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project.
 
 <!-- TOC --><a name="features-testing"></a>
 ### Features testing
@@ -228,6 +240,7 @@ Naturally enough, have researched widely to find out how to implement a variety 
 - [digitalocean.com](https://www.digitalocean.com/)
 - [programiz.com](https://www.programiz.com/python-programming)
 - [digitalocean.com](https://www.digitalocean.com/community/tutorials/)
+- [djecrety.ir](https://djecrety.ir/)
 
 I used some code I found at [https://github.com/derlin/](https://derlin.github.io/bitdowntoc/) to generate this readme file's table of contents.
 
