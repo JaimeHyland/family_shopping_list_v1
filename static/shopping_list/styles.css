@@ -1,0 +1,24 @@
+/*
+    Custom styles
+*/
+
+.empty-block {
+    display: inline-block;
+    width: 25px;
+    height: 10px;
+    margin-bottom: 5px;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.bought-text {
+    text-decoration: line-through;
+    text-decoration-color: rgba(119,119,119, 30);
+    text-decoration-thickness: 2px;
+}

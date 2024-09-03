@@ -71,6 +71,10 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
+                        <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
+                            href="{% url 'account_signup' %}">Register</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
                             href="{% url 'account_login' %}">Login</a>
                     </li>
@@ -85,6 +89,11 @@
     </nav>
 
     <main class="flex-shrink-0 main-bg">
+        {% if user.is_authenticated %}
+        <p class="text-end m-3">You are logged in as {{ user }}</p>
+        {% else %}
+        <p class="text-end m-3">You are not logged in</p>
+        {% endif %}
 
         {% block content %}
         <!-- Content Goes here -->
@@ -108,159 +117,171 @@
 </body>
 
 <script>
-    // Change presentation of list item texts when user changes its status to cancelled or bought.
+    // Change presentation of list item texts when user changes cancelled or bought to True.
     document.addEventListener('DOMContentLoaded', function () {
-        
-        const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
-        const completedChkbxs = document.querySelectorAll('.completed-chkbx');
+    const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
+    const completedChkbxs = document.querySelectorAll('.completed-chkbx');
 
-        cancelChkbxs.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                const listItem = this.closest('.list-group-item');
-                const productText = listItem.querySelector('span');
-                const completedChkbx = listItem.querySelector('.completed-chkbx');
+    cancelChkbxs.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const listItem = this.closest('.list-group-item');
+            const productText = listItem.querySelector('span');
+            const completedChkbx = listItem.querySelector('.completed-chkbx');
 
-                if (this.checked) {
-                    productText.classList.remove('bold-text');
-                    productText.classList.add('text-muted');
-                    completedChkbx.disabled = true;
-                } else {
-                    productText.classList.remove('text-muted');
-                    productText.classList.add('bold-text');
-                    completedChkbx.disabled = false;
-                }
-            });
-
-            if (checkbox.checked) {
-                const listItem = checkbox.closest('.list-group-item');
-                const completedChkbx = listItem.querySelector('.completed-chkbx');
+            if (this.checked) {
+                productText.classList.remove('bold-text');
+                productText.classList.add('text-muted');
                 completedChkbx.disabled = true;
+            } else {
+                productText.classList.remove('text-muted');
+                productText.classList.add('bold-text');
+                completedChkbx.disabled = false;
             }
 
+            updateDatabase(checkbox, listItem.dataset.itemId);
         });
-        completedChkbxs.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                const listItem = this.closest('.list-group-item');
-                const productText = listItem.querySelector('span');
-                const cancelChkbx = listItem.querySelector('.cancel-chkbx');
 
-                if (this.checked) {
-                    productText.classList.add('bought-text');
-                    cancelChkbx.disabled = true;
-                } else {
-                    productText.classList.remove('bought-text');
-                    cancelChkbx.disabled = false;
-                }
-            });
-        });
+        if (checkbox.checked) {
+            const listItem = checkbox.closest('.list-group-item');
+            const completedChkbx = listItem.querySelector('.completed-chkbx');
+            completedChkbx.disabled = true;
+        }
     });
 
-    function getCSRFToken() {
-        let name = 'csrftoken';
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            let cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue; 
-    }
+    completedChkbxs.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const listItem = this.closest('.list-group-item');
+            const productText = listItem.querySelector('span');
+            const cancelChkbx = listItem.querySelector('.cancel-chkbx');
 
-    function confirmCancelUncancel(checkbox, itemId) {
-        if (checkbox.checked == true) {
-            if (confirm("Are you sure you don't want this item bought at this time after all?")) {
-                checkbox.checked == true
-                updateDatabase(checkbox, itemId);
+            if (this.checked) {
+                productText.classList.add('bought-text');
+                cancelChkbx.disabled = true;
             } else {
-                checkbox.checked == false;
-                updateDatabase(checkbox, itemId);
+                productText.classList.remove('bought-text');
+                cancelChkbx.disabled = false;
             }
-        } else {
-            checkbox.checked == false;
-            updateDatabase(checkbox, itemId);
-        }
-    }
 
-    function updateDatabase(checkbox, itemId) {
-
-        let action;
-
-        if (checkbox.name === 'cancelled_item') {
-            action = checkbox.checked ? 'cancel' : 'uncancel';
-        } else {
-            action = checkbox.checked ? 'buy' : 'unbuy';
-        }
-        updateForm(itemId, action);
-        submitForm();
-    }
-
-    function submitForm() {
-        let form = document.getElementById("shopping-list-form");
-        let formData = new FormData(form); 
-        // Remove cancelled_item from formData
-        formData.delete('cancelled_item');
-        for (let [key, value] of formData.entries()) {
-        }
-
-        fetch(form.getAttribute('action'), {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCSRFToken()
-                
-            },  
-        })
-        
-        .then(response => {
-            if (response.ok) {
-                console.log('Form submitted successfully');
-            }
-            else {
-                console.error('Form submission failed', response.status);
-            }
-        })
-        .catch(error => {
-            console.error('Form submission error', error);
+            updateDatabase(checkbox, listItem.dataset.itemId);
         });
-    }
+    });
+});
 
-    function updateForm(itemId, action) {
-        document.getElementById('item-id').value = itemId;
-        document.getElementById('action-type').value = action;
-    }
-
-
-    // Check whether current location protocol is secure or not and define WebSocket protocol accordingly.
-
-    const wsProt = window.location.protocol === "https:" ? "wss" : "ws";
-
-    // Build the WebSocket URL.
-    const wsUrl = `${wsProt}://${window.location.host}/ws/shopping_list/`;
-
-    const socket = new WebSocket(wsUrl);
-
-    socket.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        console.log(data.message);
-        // Update the DOM with new data
-        if (data.message === 'Shopping list updated') {
-            location.reload();
+function getCSRFToken() {
+    let name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
-    };
+    }
+    return cookieValue; 
+}
 
-    socket.onerror = function(error) {
-        console.error('A WebSocket error has occurred: ',error);
+function updateDatabase(checkbox, itemId) {
+    let action;
+
+    if (checkbox.name === 'cancelled_item') {
+        action = checkbox.checked ? 'cancel' : 'uncancel';
+    } else {
+        action = checkbox.checked ? 'buy' : 'unbuy';
     }
 
-    // Function to send new data
-    function sendData(message) {
-        ws.send(JSON.stringify({'message': message}));
+    updateForm(itemId, action);
+    submitForm();
+
+    // Send data through WebSocket after the form is submitted
+    const bought = (action === 'buy');
+    const cancelled = (action === 'cancel');
+    sendData(itemId, bought, cancelled);
+}
+
+function submitForm() {
+    let form = document.getElementById("shopping-list-form");
+    let formData = new FormData(form);
+
+    fetch(form.getAttribute('action'), {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCSRFToken()
+        },  
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Form submitted successfully');
+        } else {
+            console.error('Form submission failed', response.status);
+        }
+    })
+    .catch(error => {
+        console.error('Form submission error', error);
+    });
+}
+
+function updateForm(itemId, action) {
+    document.getElementById('item-id').value = itemId;
+    document.getElementById('action-type').value = action;
+}
+
+// WebSocket setup
+const wsProt = window.location.protocol === "https:" ? "wss" : "ws";
+const wsUrl = `${wsProt}://${window.location.host}/ws/`;
+const socket = new WebSocket(wsUrl);
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const listItemId = data.list_item_id;
+    const bought = data.bought;
+    const cancelled = data.cancelled;
+
+    // Find the item in the DOM and update it
+    const listItem = document.querySelector(`[data-item-id='${listItemId}']`);
+    const productText = listItem.querySelector('span');
+    const cancelChkbx = listItem.querySelector('.cancel-chkbx');
+    const completedChkbx = listItem.querySelector('.completed-chkbx');
+
+    if (cancelled) {
+        productText.classList.remove('bold-text');
+        productText.classList.add('text-muted');
+        completedChkbx.disabled = true;
+        cancelChkbx.checked = true;
+    } else {
+        productText.classList.remove('text-muted');
+        productText.classList.add('bold-text');
+        completedChkbx.disabled = false;
+        cancelChkbx.checked = false;
     }
+
+    if (bought) {
+        productText.classList.add('bought-text');
+        cancelChkbx.disabled = true;
+        completedChkbx.checked = true;
+    } else {
+        productText.classList.remove('bought-text');
+        cancelChkbx.disabled = false;
+        completedChkbx.checked = false;
+    }
+};
+
+socket.onerror = function(error) {
+    console.error('A WebSocket error has occurred: ', error);
+}
+
+function sendData(itemId, bought, cancelled) {
+    const user = "current_user"; // Replace with actual user data if available
+    socket.send(JSON.stringify({
+        'list_item_id': itemId,
+        'bought': bought,
+        'cancelled': cancelled,
+        'user': user
+    }));
+}
 </script>
 
 </html>

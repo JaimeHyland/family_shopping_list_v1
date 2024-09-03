@@ -1,9 +1,21 @@
 from django.contrib import admin
-from .models import List_item, Shop, Category, Product
+from .models import ListItem, Shop, Category, Product
 from django_summernote.admin import SummernoteModelAdmin
 
-@admin.register(List_item, Shop, Category, Product)
-class NoteAdmin(SummernoteModelAdmin):
+class ListItemAdmin(admin.ModelAdmin):
+    # Display fields on admin/.../change page
+    fields = ('product', 'default_shop', 'category', 'bought', 'cancelled')
+    
+    readonly_fields = ('default_shop', 'category')
 
-    summernote_fields = ('creator_notes', 'shopper_notes')
-    search_fields = ['product']
+    def default_shop(self, obj):
+        return f"{obj.product.default_shop}"
+
+    def category(self, obj):
+        return f"{obj.product.category}"
+
+    # Set field names for admin interface
+    default_shop.short_description = 'Default Shop'
+    category.short_description = 'Category'
+
+admin.site.register(ListItem, ListItemAdmin)

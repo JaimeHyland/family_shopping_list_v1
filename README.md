@@ -240,7 +240,8 @@ Naturally enough, have researched widely to find out how to implement a variety 
 - [digitalocean.com](https://www.digitalocean.com/)
 - [programiz.com](https://www.programiz.com/python-programming)
 - [digitalocean.com](https://www.digitalocean.com/community/tutorials/)
-- [djecrety.ir](https://djecrety.ir/)
+- [geeksforgeeks.org](https://www.geeksforgeeks.org/)
+- [medium.com](https://medium.com/)
 
 I used some code I found at [https://github.com/derlin/](https://derlin.github.io/bitdowntoc/) to generate this readme file's table of contents.
 

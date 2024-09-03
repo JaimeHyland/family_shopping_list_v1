@@ -14,20 +14,21 @@
           <!-- Input types to be dynamically defined in javascript and parsed as appropriate in the ShoppingListView.post() method -->
           <input type="hidden" id="item-id" name="item_id" value="">
           <input type="hidden" id="action-type" name="action" value="">
-          <ul class="list-group list-group-flush mx-lg-3">
+          <ul id="shopping_list" class="list-group list-group-flush mx-lg-3">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <h4>Cancelled</h4>
                 <h4>Bought</h4>
             </li>
-            {% for item in items %}
+            {% for item in shopping_list %}
             <li class="list-group-item d-flex justify-content-between align items center">
-              <div>
+              <div class="d-flex align-items-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="confirmCancelUncancel(this, '{{ item.id }}')">
                 <div class="empty-block"></div>
                 <span class="{% if item.cancelled %}text-muted{% endif %}{% if not item.cancelled %}bold-text{% endif %}">
                   <a class="link-success link-opacity-30-hover link-underline-opacity-10"
-                    href="{% url 'product_detail' item.product.slug %}">{{ item.product.product_name }}</a></span>
+                    href="{% url 'product_detail' item.product.slug %}">{{ item.product.product_name }}</a>
+                </span>
               </div>
               <div>
                 <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"

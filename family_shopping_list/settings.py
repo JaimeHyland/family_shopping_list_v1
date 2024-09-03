@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'family_shopping_list.wsgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 

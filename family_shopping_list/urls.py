@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from shopping_list import views
 
 urlpatterns = [
     path('', include('shopping_list.urls')),
     path("accounts/", include("allauth.urls")),
     path('admin/', admin.site.urls),
+    path('summernote/', include('django_summernote.urls')),
+    path('<slug:slug>/', views.ShoppingListView.product_detail, name="product_detail"),
 ]
