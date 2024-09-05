@@ -28,7 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
 class ShopAdmin(admin.ModelAdmin):
     list_display = ('shop_name', 'slug')
     readonly_fields = ('slug', 'date_created',)
-    fields = ('shop_name', 'slug', 'creator', 'date_created', 'notes', 'current')
+    fields = ('shop_name', 'slug', 'type_of_shop','creator', 'date_created', 'notes', 'current')
 
 
 class CategoryAdmin(admin.ModelAdmin):

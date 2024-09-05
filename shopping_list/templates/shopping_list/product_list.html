@@ -6,6 +6,8 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="row">
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add a new product</button>
         <h1 class="mx-auto">Products</h1>
       </div>
       <div class="row">
@@ -32,7 +34,45 @@
           {% endfor %}
           
 
-          <button type="submit" id="add-product-to-list" class="btn btn-primary mt-3" disabled>Add product(s) to shopping list</button>
+          <button type="submit" id="add-product-to-list" class="btn btn-primary mt-3" disabled>Add marked product(s) to shopping list</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal to allow user to add product to the product list -->
+
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="add-product-form" method="POST" action="{% url 'add_product' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="product_name" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="product_name" name="product_name" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category">
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="default_shop" class="form-label">Default Shop</label>
+            <select class="form-select" id="default_shop" name="default_shop">
+              {% for shop in shops %}
+                <option value="{{ shop.id }}">{{ shop.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Product</button>
         </form>
       </div>
     </div>

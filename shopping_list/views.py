@@ -5,7 +5,7 @@ from django.views import View
 from .models import ListItem, Product, Shop, Category
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from collections import defaultdict
+from django.db.models import Q
 
 
 def shop(request, shop_name):
@@ -87,8 +87,9 @@ class ListItemView(View):
 
 class ProductListView(View):
     def get(self, request, *args, **kwargs):
+
         product_list = Product.objects.filter(current=True).order_by('category__category_name', 'date_created')
-        
+
         grouped_products = {}
 
         # Group products by category

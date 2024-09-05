@@ -5,13 +5,26 @@ from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
+
+
 class Shop(models.Model):
+
+    TYPES_OF_SHOP = (
+        (1, 'Supermarket'),
+        (2, 'Organic shop'),
+        (3, 'DIY center'),
+        (4, 'Drugstore'),
+        (5, 'Specialist retailer'),
+        (6, 'Stationer'),
+    )
     shop_name = models.CharField(max_length=50, null=False, blank=False)
     slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "user_who_created_shop")
     date_created = models.DateTimeField(auto_now=True)
     notes = models.TextField(null=True, blank=True)
+    type_of_shop = models.IntegerField(choices=TYPES_OF_SHOP)
     current = models.BooleanField(default=True)
+
 
     def save(self, *args, **kwargs):
         if not self.slug:
