@@ -27,7 +27,7 @@
                 <div class="empty-block"></div>
                 <span class="{% if item.cancelled %}text-muted{% endif %}{% if not item.cancelled %}bold-text{% endif %}">
                   <a class="link-success link-opacity-30-hover link-underline-opacity-10"
-                    href="{% url 'product_detail' item.product.slug %}">{{ item.product.product_name }}</a>
+                    href="{% url 'list_item' slug=item.product.slug %}">{{ item.product.product_name }}</a>
                 </span>
               </div>
               <div>
@@ -38,7 +38,7 @@
             {% endfor %}
             <button type="submit">Refresh shopping list</button>
             <button type="submit">Adjust shopping list filter</button>
-            <button type="submit">Add item to shopping list</button>
+              <a href="{% url 'product_list' %}" class="btn btn-primary">Add item(s) to shopping list</a>
           </ul>
         </form>
       </div>

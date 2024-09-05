@@ -3,9 +3,9 @@ import json
 
 class ShoppingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-
+        
+        # All clients join this group
         self.group_name = "shopping_list_updates"
-
 
         await self.channel_layer.group_add(
             self.group_name,
@@ -15,6 +15,7 @@ class ShoppingConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        # This removes the current channel from the shopping_list_updates group
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
@@ -23,7 +24,8 @@ class ShoppingConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         list_item_id = data['list_item_id']
-        status = data['status']
+        bought = data['bought']
+        cancelled = data['cancelled']
         user = data['user']
 
         await self.channel_layer.group_send(
@@ -31,7 +33,8 @@ class ShoppingConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'list_item_update',
                 'list_item_id': list_item_id,
-                'status': status,
+                'bought': bought,
+                'cancelled': cancelled,
                 'user': user
             }
         )
@@ -39,6 +42,7 @@ class ShoppingConsumer(AsyncWebsocketConsumer):
     async def list_item_update(self, event):
         await self.send(text_data=json.dumps({
             'list_item_id': event['list_item_id'],
-            'status': event['status'],
+            'bought': event['bought'],
+            'cancelled': event['cancelled'],
             'user': event['user']
         }))

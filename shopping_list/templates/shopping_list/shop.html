@@ -1,58 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    {% load static %}
-    <meta charset="utf-8"/>
+{% extends "base.html" %}
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicons/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/favicons/site.webmanifest' %}">
+{% block content %}
 
-    <title>Shop Room</title>
-</head>
-<body>
-    <textarea id="shop-log" cols="100" rows="20"></textarea><br>
-    <input id="shop-message-input" type="text" size="100"><br>
-    <input id="shop-message-submit" type="button" value="Send">
-    {{ shop_name|json_script:"shop-name" }}
-    <script>
-        const shopName = JSON.parse(document.getElementById('shop-name').textContent);
-        /* Set up the protocol depending on whether the site is using http or https */
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const chatSocket = new WebSocket(
-            protocol +
-            '//'
-            + window.location.host
-            + '/ws/shop/'
-            + shopName
-            + '/'
-        );
+<div class="shop">
+    <h1>{{ product.product_name }}</h1>
+    <p><strong>Category:</strong> {{ product.category.name }}</p>
+    <p><strong>Default Quantity:</strong> {{ product.default_quantity }} {{ product.default_unit }}</p>
+    <p><strong>Default Source:</strong> {{ product.default_source.name }}</p>
+    <p><strong>Creator:</strong> {{ product.creator.username }}</p>
+    <p><strong>Notes:</strong> {{ product.notes }}</p>
+    <p><strong>Current:</strong> {{ product.current|yesno:"Yes,No" }}</p>
+</div>
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#shop-log').value += (data.message + '\n');
-        };
-
-        chatSocket.onclose = function(e) {
-            console.error('Shop socket closed unexpectedly');
-        };
-
-        document.querySelector('#shop-message-input').focus();
-        document.querySelector('#shop-message-input').onkeyup = function(e) {
-            if (e.key === 'Enter') {  // enter, return
-                document.querySelector('#shop-message-submit').click();
-            }
-        };
-
-        document.querySelector('#shop-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#shop-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
-</body>
-</html>
+{% endblock %}

@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<div class="list-item-detail">
+<div class="list-item detail">
     <h1>{{ product.product_name }}</h1>
-    <p><strong>Category:</strong> {{ product.category.name }}</p>
+    <p><strong>Category:</strong> {{ list_item.product.category.name }}</p>
     <p><strong>Default Quantity:</strong> {{ product.default_quantity }} {{ product.default_unit }}</p>
     <p><strong>Default Source:</strong> {{ product.default_source.name }}</p>
     <p><strong>Creator:</strong> {{ product.creator.username }}</p>

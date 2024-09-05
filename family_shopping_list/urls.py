@@ -23,5 +23,4 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path('admin/', admin.site.urls),
     path('summernote/', include('django_summernote.urls')),
-    path('<slug:slug>/', views.ShoppingListView.product_detail, name="product_detail"),
 ]

@@ -206,6 +206,13 @@ The following will be done before submission of a later iteration of this projec
 ### Time management
 When faced with the inevitable coding challenges of an inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for help. In addition, some of my decisions on pages and features to be included were over-ambitious.
 
+### Technical tools and technical issues resolved 
+
+Among many lessons I managed through blood, sweat and tears to learn from were the following:
+- The use of the django shell (*'python3 manage.py shell'*) to run queries without altering the core code. 
+- The use of pre-saved queries in a management/command/[command_file_name].py file (along with various issues attached to using it, which took me quite some time to sort out!)
+- the use of websockets via django's channels and daphne packages was one of the biggest challenges I faced in developing this app. I depended heavily on a [tutorial](https://channels.readthedocs.io/en/stable/tutorial/index.html) on how to make a simple messaging app using the two packages that I found in the django documentation.
+
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
 The major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App.
@@ -230,7 +237,7 @@ All the code is my own, though some of it is adapted from, or at least inspired 
 
 <!-- TOC --><a name="external-technical-and-learning-resources"></a>
 ### External technical and learning resources
-Naturally enough, have researched widely to find out how to implement a variety of features not explicitly included in Code Institute's learning materials, including several visits to the following sites (\*):
+Naturally enough, have researched widely to find out how to implement a variety of features not explicitly included in Code Institute's learning materials, including several visits to the following sites:
 - [w3schools.com](https://w3schools.com/)
 - [stackoverflow.com](https://stackoverflow.com/)
 - [freecodecamp.org](https://www.freecodecamp.org/)
@@ -242,10 +249,9 @@ Naturally enough, have researched widely to find out how to implement a variety 
 - [digitalocean.com](https://www.digitalocean.com/community/tutorials/)
 - [geeksforgeeks.org](https://www.geeksforgeeks.org/)
 - [medium.com](https://medium.com/)
+- [django channels](https://channels.readthedocs.io/en/latest/)
 
 I used some code I found at [https://github.com/derlin/](https://derlin.github.io/bitdowntoc/) to generate this readme file's table of contents.
-
-\* This list will be supplemented in future iterations of this project.
 
 <!-- TOC --><a name="other-credits"></a>
 ### Other credits
