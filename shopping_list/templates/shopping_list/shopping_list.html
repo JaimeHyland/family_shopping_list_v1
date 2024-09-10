@@ -2,6 +2,54 @@
 
 {% block content %}
 
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#startShoppingModal">
+  Start Shopping
+</button>
+
+<button type="button" class="btn btn-secondary" id="finishShoppingBtn" disabled>
+  Finish Shopping in This Shop
+</button>
+
+<form method="get">
+  <label for="filter_by">Filter by:</label>
+  <select name="filter_by" id="filter_by">
+      <option value="shop" {% if filter_option == 'shop' %}selected{% endif %}>Shop</option>
+      <option value="category" {% if filter_option == 'category' %}selected{% endif %}>Category</option>
+  </select>
+
+  <label for="order_by">Order by:</label>
+  <select name="order_by" id="order_by">
+      <option value="shop" {% if order_option == 'shop' %}selected{% endif %}>Shop</option>
+      <option value="category" {% if order_option == 'category' %}selected{% endif %}>Category</option>
+  </select>
+  
+  <button type="submit">Apply</button>
+</form>
+
+<div class="modal fade" id="startShoppingModal" tabindex="-1" aria-labelledby="startShoppingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="startShoppingModalLabel">Choose a Shop</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="startShoppingForm">
+          <div class="mb-3">
+            <label for="shop" class="form-label">Select Shop</label>
+            <select class="form-select" id="shop" name="shop" required>
+              {% for shop in shops %}
+                <option value="{{ shop.id }}">{{ shop.shop_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Start Shopping</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="col-12 mt-3">
   <div class="row justify-content-center">
     <div class="col-lg-8">
@@ -37,7 +85,6 @@
             </li>
             {% endfor %}
             <button type="submit">Refresh shopping list</button>
-            <button type="submit">Adjust shopping list filter</button>
               <a href="{% url 'product_list' %}" class="btn btn-primary">Add item(s) to shopping list</a>
           </ul>
         </form>
@@ -46,3 +93,29 @@
   </div>
 </div>
 {% endblock %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const startShoppingForm = document.getElementById('startShoppingForm');
+    const finishShoppingBtn = document.getElementById('finishShoppingBtn');
+    const checkboxes = document.querySelectorAll('.bought-checkbox');
+    
+    let currentShopId = null;
+
+    startShoppingForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      currentShopId = document.getElementById('shop').value;
+      finishShoppingBtn.disabled = false;
+      checkboxes.forEach(checkbox => checkbox.disabled = false);
+      // Get rid of the modal dialogue
+      const modal = bootstrap.Modal.getInstance(document.getElementById('startShoppingModal'));
+      modal.hide();
+    });
+
+    finishShoppingBtn.addEventListener('click', function() {
+      currentShopId = null;
+      finishShoppingBtn.disabled = true;
+      checkboxes.forEach(checkbox => checkbox.disabled = true);
+    });
+  });
+</script>

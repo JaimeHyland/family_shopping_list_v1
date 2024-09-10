@@ -56,10 +56,12 @@ INSTALLED_APPS = [
     'cloudinary_storage',
 ]
 
+LOGIN_URL = 'logged_out_homepage'
+
 # Required by django-allauth
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'shopping_list'
+LOGOUT_REDIRECT_URL = 'logged_out_homepage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

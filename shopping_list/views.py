@@ -6,12 +6,24 @@ from .models import ListItem, Product, Shop, Category
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+from allauth.account.views import PasswordChangeView
+from django.urls import reverse_lazy
+from django.contrib import messages
 
 
+def welcome_page(request):
+    if request.user.is_authenticated:
+        return redirect('shopping_list')
+    return render(request, 'logged_out_homepage.html')
+
+
+@login_required
 def shop(request, shop_name):
     context = {"shop_name": shop_name}
     return render(request, "shopping_list/shop.html", context)
 
+
+@login_required
 def get(self, request, *args, **kwargs):
         try:
             items = ListItem.objects.filter(bought=False)
@@ -22,6 +34,8 @@ def get(self, request, *args, **kwargs):
             print(f"Error processing GET request: {e}")
             return HttpResponseBadRequest("Invalid request")
 
+
+@login_required
 def mark_item(request, item_id, status):
     list_item = get_object_or_404(ListItem, id=item_id)
     list_item.status = status
@@ -44,8 +58,29 @@ def mark_item(request, item_id, status):
 @method_decorator(login_required, name='dispatch')
 class ShoppingListView(View):
     def get(self, request, *args, **kwargs):
-        shopping_list = ListItem.objects.filter(bought=False, cancelled=False).order_by('id')
-        return render(request, 'shopping_list/shopping_list.html', {'shopping_list': shopping_list})
+        filter_chosen = request.GET.get('filter_by', 'category')  # Both options are 'category' by default
+        order_chosen = request.GET.get('order_by', 'category')
+
+        shopping_list = ListItem.objects.filter(bought=False, cancelled=False)
+        
+        if filter_chosen == 'shop':
+            shopping_list = shopping_list.order_by('shop_bought__shop_name')
+        elif filter_chosen == 'category':
+            shopping_list = shopping_list.order_by('product__category__category_name')
+
+        if order_chosen == 'shop':
+            shopping_list = shopping_list.order_by('shop_bought__shop_name', 'product__category__category_name')
+        elif order_chosen == 'category':
+            shopping_list = shopping_list.order_by('product__category__category_name', 'shop_bought__shop_name')
+
+        shopping_list = ListItem.objects.filter(current=True, bought=False, cancelled=False).order_by('id')
+        shops = Shop.objects.filter(current=True).order_by('type_of_shop')
+        return render(request, 'shopping_list/shopping_list.html', {
+            'shopping_list': shopping_list,
+            'shops': shops,
+            'filter_chosen': filter_chosen,
+            'order_chosen': order_chosen,
+            })
 
     def post(self, request, *args, **kwargs):
         try:
@@ -78,6 +113,7 @@ class ShoppingListView(View):
             return HttpResponseBadRequest("Invalid request")
 
 
+@method_decorator(login_required, name='dispatch')
 class ListItemView(View):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
@@ -85,6 +121,7 @@ class ListItemView(View):
         return render(request, 'shopping_list/list_item.html', {'list_item': listItem})
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductListView(View):
     def get(self, request, *args, **kwargs):
 
@@ -98,38 +135,54 @@ class ProductListView(View):
             if category_name not in grouped_products:
                 grouped_products[category_name] = []
             grouped_products[category_name].append(product)
+        # For the AddProductModalDialog to populate the dropdowns
+        categories = Category.objects.all()
+        shops = Shop.objects.all()
 
-        print("DEBUG! Grouped Products:", grouped_products)
-        return render(request, 'shopping_list/product_list.html', {'grouped_products': grouped_products})
+        return render(request, 'shopping_list/product_list.html', {
+            'grouped_products': grouped_products,
+            'categories': categories,
+            'shops': shops
+        })
 
 
+@method_decorator(login_required, name='dispatch')
 class ShopListView(View):
     def get(self, request, *args, **kwargs):
         shopList = Shop.objects.filter(current=True)
         return render(request, 'shopping_list/shop_list.html', {'shop_list': shopList})
 
+
+@method_decorator(login_required, name='dispatch')
 class CategoryListView(View):
     def get(self, request, *args, **kwargs):
         categoryList = Category.objects.filter(current=True)
         return render(request, 'shopping_list/category_list.html', {'category_list': categoryList})
 
+
+@method_decorator(login_required, name='dispatch')
 class ProductView(View):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
         product = get_object_or_404(Product, slug=slug)
         return render(request, 'shopping_list/product.html', {'product': product})
 
+
+@method_decorator(login_required, name='dispatch')
 class ShopView(View):
     def get(self, request, *args, **kwargs):
         shop = get_object_or_404(Shop, slug=slug)
         return render(request, 'shopping_list/shop.html', {'shop': shop})
 
+
+@method_decorator(login_required, name='dispatch')
 class CategoryView(View):
     def get(self, request, *args, **kwargs):
         category = get_object_or_404(Category, slug=slug)
         return render(request, 'shopping_list/category.html', {'category': category})
 
 
+@method_decorator(login_required, name='dispatch')
 class AddToShoppingListView(View):
     def post(self, request, *args, **kwargs):
         selected_products = request.POST.getlist('selected_products')
@@ -138,5 +191,24 @@ class AddToShoppingListView(View):
         for product_id in selected_products:
             product = Product.objects.get(id=product_id)
             ListItem.objects.create(product=product, quantity_required=1, creator=creator)
-
+        
         return redirect('shopping_list')
+
+
+@method_decorator(login_required, name='dispatch')
+class AddProductView(View):
+    def post(self, request, *args, **kwargs):
+        product_name = request.POST.get('product_name')
+        category_id = request.POST.get('category')
+        default_shop_id = request.POST.get('default_shop')
+
+        category = Category.objects.get(id=category_id)
+        default_shop = Shop.objects.get(id=default_shop_id)
+
+        Product.objects.create(
+            product_name=product_name,
+            category=category,
+            default_shop=default_shop
+        )
+
+        return redirect('product_list')

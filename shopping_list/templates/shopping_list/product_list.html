@@ -58,7 +58,7 @@
           </div>
           <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select class="form-select" id="category" name="category">
+            <select class="form-select" id="category" name="category" required>
               {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.category_name }}</option>
               {% endfor %}
@@ -66,9 +66,9 @@
           </div>
           <div class="mb-3">
             <label for="default_shop" class="form-label">Default Shop</label>
-            <select class="form-select" id="default_shop" name="default_shop">
+            <select class="form-select" id="default_shop" name="default_shop" required>
               {% for shop in shops %}
-                <option value="{{ shop.id }}">{{ shop.name }}</option>
+                <option value="{{ shop.id }}">{{ shop.shop_name }}</option>
               {% endfor %}
             </select>
           </div>

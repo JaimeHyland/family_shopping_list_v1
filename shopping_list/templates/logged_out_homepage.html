@@ -2,7 +2,28 @@
 
 {% block content %}
 
-<p>You're not logged in!</p>
-<p>Please log in!</p>
+<div class="container">
+    <h1>Welcome to the Hyland Family's Shopping List App!</h1>
+    <p>This app is currently a tool designed for the private use of the Hyland family. It is also open to third parties authorised by the family</p>
+    <p>If you're already a registered Hyland, please <a href="{% url 'account_login' %}">log in</a> to use the App.</p>
+    <p>If you're not and you want to become one, please ask the Site Boss personally to create a user and initial password for you.</p>
 
+    <h2>Outside users</h2>
+    <p>If you do not know the Site Boss personally, than it's unlikely you'll want to enter this site, unless you're here to examine the
+    app for assessment purposes, for example. If that is the case, you'll already have received three different login credentials 
+    (one set as a superuser, one as a normal adult user and one as a child), each with an 
+    initial password, which you should modify upon first logging in.</p>
+
+    <p>Assessors will have three identities: . Each category of user
+        will have a different password.</p>
+
+    <p>We may in the future extend this App's functionality for use by other families. A message to this effect will appear on this page
+        if and when that happens</p>
+    
+    <h2>Outside users</h2>
+    <p>If you're signing in for the first time, the first you should change the password given to you by the Site Boss .
+        Otherwise, the Site Boss will be in a position to sign in pretending to be you, and possibly mess around with the data in the site
+        and blame you.</p>
+    <a href="{% url 'account_login' %}" class="btn btn-primary">Log In</a>
+</div>
 {% endblock %}

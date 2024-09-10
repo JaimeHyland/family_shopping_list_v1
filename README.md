@@ -62,45 +62,78 @@ We decided that the MVP should include the following features:
 
 <!-- TOC --><a name="system-design"></a>
 ## System design
-
 Some flow charts portraying a selection of important Hyland family shopping list workflows are yet to be provided.
 
 I prepared a series of outline flow charts in consultation with Jannett on the basis of our family needs and habits. Once we'd agreed the basic processes, I began thinking about how to actually program the various functionalities the family needs in the short term.
 
 My reasons for choosing a django-based system on a Postgresql database at the back end, with some important appearances from Bootstrap on the front end, were basically twofold:
 - Django offers a seamless way of creating a simple full-stack website quickly and corresponding to the family's needs and habits.
-- The most obvious way of satisfying the requirements of my fourth portfolio project on my Code Institute Full-Stack Programming course was to use Django along with Bootstrap.
+- The most obvious way of satisfying the requirements of my fourth portfolio project on my Code Institute Full-Stack Programming course was to use Django along with Bootstrap, among other technologies.
 
 ### Authentication
-I decided that, since the authentication needs of the app are fairly standard, I would use Django-Allauth to handle authentication.
+I decided that, since the authentication needs of the app are fairly standard, I would use Django-Allauth to handle authentication, with a number of small adjustments.
 
-I also decided that I would not require account verification via e-mail.
+Chief among the adjustments I made to the standard Django-Allauth process is that I removed any registration process managed by prospective users themselves. Since the App is (for the moment at least) for the exclusive use of the Hyland family (and honorary members of the Hyland family), I decided that the App Boss (me) would handle any registration process manually using the Django Admin structure.
+
+For the same reason, I do not use any references to e-mails for the moment.
+
+Of course, if the App were further developed for use by other families for their own needs, I would clearly need to add a user-managed registration system again, and would almost certainly use a pretty much standard AllAuth process.
+
+Even if the App never moves beyond the Hyland family circle, I may yet add in e-mail address data in the future that allows users to report issues and request changes from the App Boss. My partner and kids can always talk to me, but they might like to send me a note immediately while the issue is in their head.
+
+For the moment, though, I've parked that issue.
+
+
+#### Project assessment/Outside users
+For anyone outside the family who needs or wishes to enter the App as a user (as part of their assessment of this project, for example), I will create an extra user for each user status that that person may need. I will then inform that person of the user name and password for each of the identities that they may wish or need to use to access the App's functionalities.
+
+I'll then ask them to change their password on first logging in as each user.
+
+I'm happy enough to use the original allauth change_password template for this purpose, except that I don't like the way the standard Django-allauth functionality appears to leave the user stranded on the password_change_done page when that user has changed their password. However, that's another issue I've parked for the moment due to lack of time.
+
 
 <!-- TOC --><a name="the-database-structure"></a>
 ### The database structure
 
-I decided that the simplest way implementing the above requirements at the back end was to base the system on two main tables:
+I decided that the most convenient and forward-looking way to implement the above requirements (and possible future requirement) at the back end was to base the system on two main tables:
 - a Product table, listing all the articles approved for inclusion in the shopping list
-- a List Item table (the actual shopping list), in which a new record is created every time a new item is added to the shopping list by picking a product to be bought
-I decided not to ordinarily delete List Item or Product records, but simply to remove list items from the visible shopping list as they're bought or cancelled. In the case of records on the Product table, they are not shown on the Product list if the value of their 'Current' variable is set to False.
+- a ListItem table (the actual shopping list), in which a new record is created every time a new item is added to the shopping list by picking a product to be bought
 
+The other two tables (Category and Shop - see below) are designed exclusively (for the moment) to group the records in the Product and ListItem table to make it easier for the user to create the shopping list and to read and update the shopping list while out shopping.
+
+This simple structure should allow the user to pick products out from a pre-existing product list and add them to the shopping list, change the quantity of the item required, add notes for shoppers, etc.. Some users (the adults) should be able to add, remove and modify product records on the product list, thus managing the sorts of thing that can end up on the shopping list.
+
+When a shopping list item is either bought or cancelled, it will stop appearing on the shopping list (for details, see below), but it will not be removed from the database. This is so that the Shopping List App will always contain a record of a purchase or cancellation, along with any notes a user enters into a shopping list record. This might allow the App manager to see how many, say, blocks of white cheddar were bought in the previous month, for example. In the future too, such details as purchase price might be added as new fields to the model and can be used as a permanent record of purchases, with all the information one might require to assess costs and other details of the family's purchasing patterns.
+
+It may even provide a first step to integrating electronic receipts into the list.
+
+So, there is only one ongoing and ever-changing shopping list, that has products added to it and removed from it as they are bought or cancelled. Removal from the shopping list, however, does not mean deletion from the ListItem table; a list item being marked as bought or cancelled merely changes the value in the appropriate boolean field, with the effect that the item will disappear from the list (for details, see below).
+
+It should be noted (and this applies to all models in the App Database) that even if a record is actually 'deleted' from the App, it is not ordinarily completely deleted from the database. What happens is that it loses its currency: that is to say, the flag 'current' in the database record, which is set by default to True is changed to False. All records whose boolean value 'current' is False are completely ignored by the App. Where they need to be restored for some reason or another, only the Superuser can do so using Django's Admin feature.
+
+It is also possible for Superusers to delete records, but they shouldn't do so except in cases where there is absolutely no alternative.
+
+#### Grouping and filtering products and shopping list items
 The other bespoke tables of the database are as follows:
 - Shop
 - Category
 
 For the moment, the purpose of both these tables is simply to allow the user to appropriately filter results for the Product and List Item tables, depending on where they are and what category of shopping they want to buy.
 
-They also have the potential to expand to provide more information to the family members in future iterations of the App.
+They also have the potential to expand to provide more information to the family members in future iterations of the App, with new fields added.
 
 ![The basic design of the DB](/assets/documentation/shopping_list_database_schema.webp)
 
-*The basic design of the bespoke tables in the database*
+*The basic design of the bespoke tables in the database (some fields have been added to each table/model since this drawing was made) *
 
+#### Users and user group permissions
 There are also two tables generic to Django:
 - User
 - Group
 
-The purpose of the first of these from our point of view is to manage users and maintain security (so that nobody but family members can access the website), the second (again, from our point of view) is simply to maintain the functional distinction between an adult user and a child.
+The purpose of the first of these from our point of view is to manage users and maintain security (so that nobody but family members can access the website), the second (again, from our point of view) is simply to maintain the functional distinction between an adult user and a child.  Adult users, even if they're not Superusers, are allowed to add products to and remove them from the product list, as well as being able to add and remove shops and product categories.
+
+Child users are allowed only to add products to the shopping list and to buy and cancel items already on the shopping list. In a future iteration it might be a good idea to allow children to request that products to the product list and of shops and categories from their respective tables.
 
 
 <!-- TOC --><a name="the-websites-workflow"></a>
@@ -112,10 +145,14 @@ The first thing a user sees on navigating to the website is an login page. Nobod
 
 <!-- TOC --><a name="cancelling-list-items"></a>
 ### Cancelling list items
-Each item on the shopping list will have two checkboxes to the left and right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirm message. This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again.
+Each item on the shopping list will have two checkboxes; one on the left and the other on the right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirmation message. This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again.
+
+The database is updated as soon as the user confirms the change via the confimation message (a modular webpage). Undoing the cancellation will update the database again.
+
+When the user reloads the page, the page's the cancelled item will disappear.
 
 <!-- TOC --><a name="buying-list-items"></a>
-### Buying list items
+### Marking list items as bought
 The right-hand checkbox marks the corresponding list item as having been bought. In this case, to facilitate the user's shopping efficiency, no confirmation message is required. The item text is displayed as bought by striking it through with a semi-transparent line, as if it had been marked off using a blunt pencil. If the checkbox is checked by accident, it can be unchecked again in the usual way. I am considering adding a modal message in a later iteration that briefly appears to show the user that their purchase has been registered as bought in the database.
 
 <!-- TOC --><a name="app-database-updates-for-checkbox-changes"></a>
