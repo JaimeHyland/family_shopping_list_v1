@@ -3,6 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.views import View
 from .models import ListItem, Product, Shop, Category
+from .forms import ProductForm, ShopForm, CategoryForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
@@ -117,7 +118,7 @@ class ShoppingListView(View):
 class ListItemView(View):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
-        listItem = get_object_or_404(ListItem, product__slug=slug)
+        listItem = get_object_or_404(ListItem, product__slug=slug, current=True, bought=False)
         return render(request, 'shopping_list/list_item.html', {'list_item': listItem})
 
 
@@ -165,14 +166,40 @@ class ProductView(View):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
         product = get_object_or_404(Product, slug=slug)
-        return render(request, 'shopping_list/product.html', {'product': product})
+        form = ProductForm(instance=product)
+        return render(request, 'shopping_list/product.html', {'form': form, 'product': product})
+
+    def post(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        product = get_object_or_404(Product, slug=slug)
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+        else:
+            messages.error(request, "A product with this name already exists.")
+        return render(request, 'shopping_list/product.html', {'form': form, 'product': product})
 
 
 @method_decorator(login_required, name='dispatch')
 class ShopView(View):
     def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
         shop = get_object_or_404(Shop, slug=slug)
-        return render(request, 'shopping_list/shop.html', {'shop': shop})
+        form = ShopForm(instance=shop)
+        return render(request, 'shopping_list/shop.html', {'form': form, 'shop': shop})
+
+    def post(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        shop = get_object_or_404(Shop, slug=slug)
+        form = ShopForm(request.POST, instance=shop)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_list')
+        else:
+            for field, errors in form.errors.items():
+                print(f"{field}: {errors}")
+        return render(request, 'shopping_list/shop.html', {'form': form, 'shop': shop})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -212,3 +239,31 @@ class AddProductView(View):
         )
 
         return redirect('product_list')
+
+@method_decorator(login_required, name='dispatch')
+class AddShopView(View):
+    def post(self, request, *args, **kwargs):
+        shop_name = request.POST.get('shop_name')
+        type_of_shop = request.POST.get('type_of_shop')
+        notes = request.POST.get('notes')
+
+        Shop.objects.create(
+            shop_name=shop_name,
+            type_of_shop=type_of_shop,
+            notes=notes,
+        )
+
+        return redirect('shop_list')
+
+@method_decorator(login_required, name='dispatch')
+class AddCategoryView(View):
+    def post(self, request, *args, **kwargs):
+        category_name = request.POST.get('category_name')
+        notes = request.POST.get('notes')
+
+        Product.objects.create(
+            category_name=category_name,
+            notes=notes,
+        )
+
+        return redirect('category_list')

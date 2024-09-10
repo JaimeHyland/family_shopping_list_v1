@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-12 mt-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="row">
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addShopModal">Add a new shop</button>
+        <h1 class="mx-auto">Shops</h1>
+      </div>
+      <div class="row">
+        <form id="shop-list-form" method="GET" action="{% url 'add_to_shopping_list' %}" class="w-100">
+          {% csrf_token %}
+          <ul class="list-group list-group-flush mx-lg-3">
+            {% for shop in shop_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <span>
+                  <a class="link-success link-opacity-30-hover link-underline-opacity-10"
+                    href="{% url 'shop_detail' slug=shop.slug %}">{{ shop.shop_name }}</a>
+                </span>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal to allow user to add shop to the shop list -->
+
+<div class="modal fade" id="addShopModal" tabindex="-1" aria-labelledby="addShopModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addShopModalLabel">Add a new shop</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="add-shop-form" method="POST" action="{% url 'add_shop' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="shop_name" class="form-label">Shop name</label>
+            <input type="text" class="form-control" id="shop" name="shop_name" required>
+          </div>
+          <div class="mb-3">
+            <label for="type_of_shop" class="form-label">Type of shop</label>
+            <select class="form-select" id="category" name="category" required>
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="default_shop" class="form-label">Default Shop</label>
+            <select class="form-select" id="default_shop" name="default_shop" required>
+              {% for shop in shops %}
+                <option value="{{ shop.id }}">{{ shop.shop_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add shop</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--javascript to toggle filter disabled<->disabled: Runs any time a checkbox status is changed -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const chkbxs = document.querySelectorAll('.add-to-list');
+      const addBtn = document.getElementById('add-shop-to-list');
+
+      // Enable add-shop button if any checkbox is enabled, disable it otherwise
+      function toggleButtonState() {
+          const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
+          addBtn.disabled = !anythingChecked;
+      }
+
+      toggleButtonState();
+  
+      // Listen for changes on any checkbox
+      chkbxs.forEach(checkbox => {
+          checkbox.addEventListener('change', toggleButtonState);
+      });
+  });
+  </script>
+{% endblock %}

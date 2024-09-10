@@ -55,20 +55,20 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == home_url %}active{% endif %}" aria-current="page"
-                            href="#">Home</a>
+                            href="{% url 'shopping_list' %}">Shopping list</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == product_list_url %}active{% endif %}"
-                            aria-current="page" href="#">Products</a>
+                            aria-current="page" href="{% url 'product_list' %}">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == category_list_url %}active{% endif %}"
-                            aria-current="page" href="#">Categories</a>
+                            aria-current="page" href="{% url 'category_list' %}">Categories</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == source_list_url %}active{% endif %}"
-                            aria-current="page" href="#">Shops</a>
+                            aria-current="page" href="{% url 'shop_list' %}">Shops</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userAccountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -131,6 +131,7 @@
 
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 </body>
 
 <script>
@@ -301,5 +302,4 @@ function sendData(itemId, bought, cancelled) {
 }
 
 </script>
-
 </html>

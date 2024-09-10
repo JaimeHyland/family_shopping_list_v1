@@ -2,14 +2,23 @@
 
 {% block content %}
 
-<div class="shop">
-    <h1>{{ product.product_name }}</h1>
-    <p><strong>Category:</strong> {{ product.category.name }}</p>
-    <p><strong>Default Quantity:</strong> {{ product.default_quantity }} {{ product.default_unit }}</p>
-    <p><strong>Default Source:</strong> {{ product.default_source.name }}</p>
-    <p><strong>Creator:</strong> {{ product.creator.username }}</p>
-    <p><strong>Notes:</strong> {{ product.notes }}</p>
-    <p><strong>Current:</strong> {{ product.current|yesno:"Yes,No" }}</p>
+<div class="shop detail">
+    <form method="POST" action="" class="w-100">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="shop_name">Shop:</label>
+             {{ form.shop_name }}
+        </div>
+        <div class="form-group"></div>
+        <label for="type_of_shop">Type of shop:</label>
+            {{ form.type_of_shop }}
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes:</label>
+            {{ form.notes }}
+        </div> 
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
 </div>
 
 {% endblock %}

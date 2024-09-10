@@ -4,9 +4,9 @@ from django_summernote.admin import SummernoteModelAdmin
 
 class ListItemAdmin(admin.ModelAdmin):
     # Display fields on admin/.../change page
-    fields = ('product', 'category', 'preferred_shop', 'bought', 'buyer', 'shop_bought', 'date_bought', 'creator_notes', 'shopper_notes', 'cancelled', 'cancelled_by', 'date_cancelled', 'quantity_required', 'quantity_bought', 'current', 'date_created', 'creator')
+    fields = ('product', 'category', 'preferred_shop', 'bought', 'buyer', 'shop_bought', 'creator_notes', 'shopper_notes', 'cancelled', 'cancelled_by', 'date_cancelled', 'quantity_required', 'quantity_bought', 'current',)
 
-    readonly_fields = ('default_shop', 'category', 'creator',)
+    readonly_fields = ('default_shop', 'date_bought', 'category', 'creator', 'date_created', 'creator')
 
     def default_shop(self, obj):
         return f"{obj.product.default_shop}"

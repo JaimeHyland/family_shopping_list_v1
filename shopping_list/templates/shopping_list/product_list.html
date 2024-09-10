@@ -32,21 +32,19 @@
               {% endfor %}
             </ul>
           {% endfor %}
-          
-
           <button type="submit" id="add-product-to-list" class="btn btn-primary mt-3" disabled>Add marked product(s) to shopping list</button>
         </form>
       </div>
     </div>
   </div>
 </div>
-<!-- Modal to allow user to add product to the product list -->
 
+<!-- Modal to allow user to add product to the product list -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+        <h5 class="modal-title" id="addProductModalLabel">Add a new product</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -56,6 +54,7 @@
             <label for="product_name" class="form-label">Product Name</label>
             <input type="text" class="form-control" id="product_name" name="product_name" required>
           </div>
+        
           <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select class="form-select" id="category" name="category" required>
@@ -64,6 +63,7 @@
               {% endfor %}
             </select>
           </div>
+        
           <div class="mb-3">
             <label for="default_shop" class="form-label">Default Shop</label>
             <select class="form-select" id="default_shop" name="default_shop" required>
@@ -72,14 +72,39 @@
               {% endfor %}
             </select>
           </div>
+        
+          <div class="mb-3">
+            <label for="default_unit" class="form-label">Default Unit</label>
+            <input type="text" class="form-control" id="default_unit" name="default_unit" required>
+          </div>
+        
+          <div class="mb-3">
+            <label for="default_quantity" class="form-label">Default Quantity</label>
+            <input type="number" class="form-control" id="default_quantity" name="default_quantity" value="1" required>
+          </div>
+        
           <button type="submit" class="btn btn-primary">Add Product</button>
         </form>
       </div>
     </div>
   </div>
+  <!-- Toast for error notification -->
+  <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast" style="position: absolute; top: 20px; right: 20px;">
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ form.product_name.errors.0 }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
 </div>
 
-<!--javascript to toggle filter disabled<->disabled: Runs any time a checkbox status is changed -->
+
+{% endblock %}
+
+{% block extra_js %}
+
+<!--javascript to toggle filter enabled<->disabled: Runs any time a checkbox status is changed -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const chkbxs = document.querySelectorAll('.add-to-list');
@@ -99,4 +124,16 @@
       });
   });
   </script>
+
+  <!--javascript to run toast so that the user knows when a new product has failed to be saved 
+  (because its name is identical to an existing one) -->
+  {% if form.errors %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Only executed if there are errors in the form
+        var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+        errorToast.show();
+      });
+    </script>
+  {% endif %}
 {% endblock %}

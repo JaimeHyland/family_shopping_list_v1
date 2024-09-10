@@ -202,6 +202,9 @@ Bugs were fixed as they arose function-by-function during development as they ar
 #### Database debugging
 While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project.
 
+#### Debugging App logic
+There remain a long list of issues with the App that I have not had the time to deal with. Some of these issues relate to the App's integration with cached data, and some are simply holes relating to duplicates, etc.. I have tried to reflect as many of them as possible in the Use Cases for resolution in future iterations of the App.
+
 <!-- TOC --><a name="features-testing"></a>
 ### Features testing
 Of course I did ongoing testing of the limited features I have implemented in both the development and deployment environment as I went through each ticket on my Kanban board (which can be found at https://github.com/users/JaimeHyland/projects/3/views/1). The App is not yet mature enough for it to make sense to subject it to a final round of features testing.

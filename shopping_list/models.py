@@ -4,9 +4,6 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
 
-# Create your models here.
-
-
 
 class Shop(models.Model):
 
@@ -16,6 +13,8 @@ class Shop(models.Model):
         (3, 'DIY center'),
         (4, 'Drugstore'),
         (5, 'Stationer'),
+        (7, 'Flatpack furniture'),
+        (8, 'Deli & fine foods'),
         (6, 'Specialist retailer'),
     )
     shop_name = models.CharField(max_length=50, null=False, blank=False)
@@ -82,7 +81,21 @@ class Product(models.Model):
     current = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if self.pk:
+            # Existing instance
+            existing_product = Product.objects.get(pk=self.pk)
+            print(f"DEBUG: {existing_product.product_name}")
+            print(f"DEBUG: {self.product_name}")
+            if existing_product.product_name != self.product_name:
+                base_slug = slugify(self.product_name)
+                slug = base_slug
+                count = 1
+                while Product.objects.filter(slug=slug).exists():
+                    slug = f'{base_slug}-{count}'
+                    count += 1
+                self.slug = slug
+        else:
+            # New instance
             base_slug = slugify(self.product_name)
             slug = base_slug
             count = 1
@@ -90,7 +103,19 @@ class Product(models.Model):
                 slug = f'{base_slug}-{count}'
                 count += 1
             self.slug = slug
+
         super().save(*args, **kwargs)
+
+    def clean(self):
+        # Ensure no product with the same name exists, case insensitive
+        if Product.objects.exclude(pk=self.pk).filter(
+            product_name__iexact=self.product_name,
+            current=True
+        ).exists():
+            raise ValidationError('A product with this name already exists.')
+
+        super().clean()
+
 
     def __str__(self):
         return self.product_name
