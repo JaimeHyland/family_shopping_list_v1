@@ -8,3 +8,4 @@ node_modules/
 .github/
 .env
 cloudinary_python.txt
+.data/

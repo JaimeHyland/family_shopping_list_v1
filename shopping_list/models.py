@@ -13,9 +13,11 @@ class Shop(models.Model):
         (3, 'DIY center'),
         (4, 'Drugstore'),
         (5, 'Stationer'),
+        (6, 'Specialist retailer'),
         (7, 'Flatpack furniture'),
         (8, 'Deli & fine foods'),
-        (6, 'Specialist retailer'),
+        (9, 'Wines and spirits'),
+        
     )
     shop_name = models.CharField(max_length=50, null=False, blank=False)
     slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
@@ -81,20 +83,7 @@ class Product(models.Model):
     current = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if self.pk:
-            # Existing instance
-            existing_product = Product.objects.get(pk=self.pk)
-            print(f"DEBUG: {existing_product.product_name}")
-            print(f"DEBUG: {self.product_name}")
-            if existing_product.product_name != self.product_name:
-                base_slug = slugify(self.product_name)
-                slug = base_slug
-                count = 1
-                while Product.objects.filter(slug=slug).exists():
-                    slug = f'{base_slug}-{count}'
-                    count += 1
-                self.slug = slug
-        else:
+        if not self.pk:
             # New instance
             base_slug = slugify(self.product_name)
             slug = base_slug
@@ -103,16 +92,38 @@ class Product(models.Model):
                 slug = f'{base_slug}-{count}'
                 count += 1
             self.slug = slug
+        else:
+            # Existing instance
+            old_product = Product.objects.get(pk=self.pk)
+            if old_product.product_name != self.product_name:
+                base_slug = slugify(self.product_name)
+                slug = base_slug
+                count = 1
+                while Product.objects.filter(slug=slug).exists():
+                    slug = f'{base_slug}-{count}'
+                    count += 1
+                self.slug = slug
 
         super().save(*args, **kwargs)
 
     def clean(self):
-        # Ensure no product with the same name exists, case insensitive
-        if Product.objects.exclude(pk=self.pk).filter(
-            product_name__iexact=self.product_name,
-            current=True
-        ).exists():
-            raise ValidationError('A product with this name already exists.')
+        # Normalize product name to lowercase
+        lc_name = self.product_name.lower()
+
+        if self.pk:
+            # Existing product: Check for duplicates case-insensitively except itself
+            if Product.objects.exclude(pk=self.pk).filter(
+                product_name__iexact=lc_name,
+                current=True
+            ).exists():
+                raise ValidationError('A product with this name already exists.')
+        else:
+            # New product: Check for duplicates case-insensitively
+            if Product.objects.filter(
+                product_name__iexact=lc_name,
+                current=True
+            ).exists():
+                raise ValidationError('A product with this name already exists.')
 
         super().clean()
 

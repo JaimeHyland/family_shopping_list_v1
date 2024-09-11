@@ -44,21 +44,21 @@
           {% csrf_token %}
           <div class="mb-3">
             <label for="shop_name" class="form-label">Shop name</label>
-            <input type="text" class="form-control" id="shop" name="shop_name" required>
+            <input type="text" class="form-control" id="shop_name" name="shop_name" required>
           </div>
           <div class="mb-3">
             <label for="type_of_shop" class="form-label">Type of shop</label>
-            <select class="form-select" id="category" name="category" required>
-              {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.category_name }}</option>
+            <select class="form-select" id="type_of_shop" name="type_of_shop" required>
+              {% for shop in shops %}
+                <option value="{{ shop.id }}">{{ shop.type_of_shop }}</option>
               {% endfor %}
             </select>
           </div>
           <div class="mb-3">
-            <label for="default_shop" class="form-label">Default Shop</label>
-            <select class="form-select" id="default_shop" name="default_shop" required>
+            <label for="notes" class="form-label">Notes</label>
+            <input type="text" class="form-control" id="notes" name="notes">
               {% for shop in shops %}
-                <option value="{{ shop.id }}">{{ shop.shop_name }}</option>
+                <option value="{{ shop.id }}">{{ shop.notes }}</option>
               {% endfor %}
             </select>
           </div>
