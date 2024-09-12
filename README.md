@@ -83,11 +83,14 @@ Even if the App never moves beyond the Hyland family circle, I may yet add in e-
 
 For the moment, though, I've parked that issue.
 
+### Django apps
+The family_shopping_list project effectively contains only one Django app: shopping_list, which effectively contains all the custom models and templates in the project. In hindsight, it may have been a better idea, and the code may have been easier to follow (including for me) if its various components had been divided into separate sub-apps.  This may be considered an opportunity for refactoring in future versions of the family shopping list!
+
 
 #### Project assessment/Outside users
 For anyone outside the family who needs or wishes to enter the App as a user (as part of their assessment of this project, for example), I will create an extra user for each user status that that person may need. I will then inform that person of the user name and password for each of the identities that they may wish or need to use to access the App's functionalities.
 
-I'll then ask them to change their password on first logging in as each user.
+I'll ask them to change their password on first logging in as each user.
 
 I'm happy enough to use the original allauth change_password template for this purpose, except that I don't like the way the standard Django-allauth functionality appears to leave the user stranded on the password_change_done page when that user has changed their password. However, that's another issue I've parked for the moment due to lack of time.
 
@@ -224,6 +227,18 @@ Owing to lack of time and resources, I was unable to do any testing on any legac
 <!-- TOC --><a name="ux"></a>
 ### UX
 The App is not yet mature enough for it to require user experience feedback from its four potential users (one of which being yours truly). It'll receive lots of informal UX feedback (whether I like it or not!) once it achieves Beta status.
+
+While the detailed information available on each product and shopping list item suits the UX needs of the Hyland family, as the Superuser is highly motivated to maintain the system assiduously, if the App should ever be converted into App generally usable by other individuals and families, the presence of such an assiduous superuser can't be guaranteed. As a result it may be necessary to "re-inject more simplicity" into the App logic, perhaps giving people the choice of using it as a simple smartphone-based shared list, containing nothing more than a list of the items that need buying, with no background details.
+
+Injecting such simplicity as an option would require a good deal of thought, consultation, coding and testing.
+
+There are also a number of issue in terms of UX that still need to be dealt with: for example, the worklflow for changing password leaves the user in a cul de sac without obvious way of getting back to the home page without either browsing backwards in the browser or directly editing the change_password_done template's url. The change_password_done template clearly needs some customisation. This constitutes another opportunity for refactoring in the future.
+
+Another issue with the UX is that users who like to use the browser's back and forward buttons will note that pages often do not change for two, three or sometimes even more clicks or taps, as product, shop and category pages have functions cause the page to reload, counting as a different instance of the page. This isn't a very serious issue, but it might be worth keeping in mind for repair in the future.
+
+The very central role of the app &ndash;its facility to add products to the list and mark them off as they are bought&ndash; still has one deceptively complex issue: it allows more than one instance of each object to be added to the list. The user should interpret this as meaning that more than one of that product should be bought, but it would be far clearer to users if there was only one item on the list with an instruction to buy two of them. This is something that sadly has to be left to another iteration of development.
+
+For the moment I'm going to assume that the facility for the shopper so be able to simply tick stuff off the list as it's bought is paramount. 
 
 <!-- TOC --><a name="final-testing-and-validation-before-submission"></a>
 ### Final testing and validation before submission

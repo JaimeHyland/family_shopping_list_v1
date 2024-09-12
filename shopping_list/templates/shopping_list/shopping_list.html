@@ -59,7 +59,7 @@
       <div class="row">
         <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
           {% csrf_token %}
-          <!-- Input types to be dynamically defined in javascript and parsed as appropriate in the ShoppingListView.post() method -->
+          <!-- Input types are defined in javascript and parsed by ShoppingListView.post() -->
           <input type="hidden" id="item-id" name="item_id" value="">
           <input type="hidden" id="action-type" name="action" value="">
           <ul id="shopping_list" class="list-group list-group-flush mx-lg-3">
@@ -93,29 +93,3 @@
   </div>
 </div>
 {% endblock %}
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const startShoppingForm = document.getElementById('startShoppingForm');
-    const finishShoppingBtn = document.getElementById('finishShoppingBtn');
-    const checkboxes = document.querySelectorAll('.bought-checkbox');
-    
-    let currentShopId = null;
-
-    startShoppingForm.addEventListener('submit', function(event) {
-      event.preventDefault();
-      currentShopId = document.getElementById('shop').value;
-      finishShoppingBtn.disabled = false;
-      checkboxes.forEach(checkbox => checkbox.disabled = false);
-      // Get rid of the modal dialogue
-      const modal = bootstrap.Modal.getInstance(document.getElementById('startShoppingModal'));
-      modal.hide();
-    });
-
-    finishShoppingBtn.addEventListener('click', function() {
-      currentShopId = null;
-      finishShoppingBtn.disabled = true;
-      checkboxes.forEach(checkbox => checkbox.disabled = true);
-    });
-  });
-</script>

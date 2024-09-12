@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 {% url 'home' as home_url %}
 {% url 'account_login' as login_url %}
 {% url 'account_logout' as logout_url %}
@@ -62,14 +63,16 @@
                         <a class="nav-link {% if request.path == product_list_url %}active{% endif %}"
                             aria-current="page" href="{% url 'product_list' %}">Products</a>
                     </li>
+                    {% if user|is_adult_filter %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == category_list_url %}active{% endif %}"
                             aria-current="page" href="{% url 'category_list' %}">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == source_list_url %}active{% endif %}"
+                        <a class="nav-link {% if request.path == shop_list_url %}active{% endif %}"
                             aria-current="page" href="{% url 'shop_list' %}">Shops</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userAccountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             User Account
@@ -129,13 +132,76 @@
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
     </script>
 
-    <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
+
+{% block extra_js %}
+<!--javascript to control the start and end shopping buttons -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startShoppingForm = document.getElementById('startShoppingForm');
+        const finishShoppingBtn = document.getElementById('finishShoppingBtn');
+        const checkboxes = document.querySelectorAll('.bought-checkbox');
+        
+        let currentShopId = null;
+
+        startShoppingForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        currentShopId = document.getElementById('shop').value;
+        finishShoppingBtn.disabled = false;
+        checkboxes.forEach(checkbox => checkbox.disabled = false);
+        // Get rid of the modal dialogue
+        const modal = bootstrap.Modal.getInstance(document.getElementById('startShoppingModal'));
+        modal.hide();
+        });
+
+        finishShoppingBtn.addEventListener('click', function() {
+        currentShopId = null;
+        finishShoppingBtn.disabled = true;
+        checkboxes.forEach(checkbox => checkbox.disabled = true);
+        });
+    });
+</script>
+<!--javascript to toggle add and delete buttons to enabled<->disabled: Runs any time a checkbox status is changed -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const chkbxs = document.querySelectorAll('.add-or-delete');
+    const addBtn = document.getElementById('add-product-to-list');
+    const delBtn = document.getElementById('delete-product');
+    
+    // Enable add-product button if any checkbox is enabled, disable it otherwise
+    function toggleButtonState() {
+      const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
+      addBtn.disabled = !anythingChecked;
+      delBtn.disabled = !anythingChecked;
+    }
+
+    toggleButtonState();
+  
+    // Listen for changes on any checkbox
+    chkbxs.forEach(checkbox => {
+        checkbox.addEventListener('change', toggleButtonState);
+    });
+  });
+</script>
+
+<!--javascript to run toast so that the user knows when a new product has failed to be saved 
+(because its name is identical to an existing one) -->
+{% if form.errors %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Only executed if there are errors in the form
+    var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+    errorToast.show();
+    });
+</script>
+{% endif %}
+{% endblock %}
 </body>
 
 <script>
-    // Change presentation of list item texts when user changes cancelled or bought to True.
+    // Change presentation of list item texts when user changes cancelled or bought checkboxes to True.
     document.addEventListener('DOMContentLoaded', function () {
     const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
     const completedChkbxs = document.querySelectorAll('.completed-chkbx');
@@ -155,7 +221,7 @@
                 productText.classList.add('bold-text');
                 completedChkbx.disabled = false;
             }
-
+            console.log("DEBUG: itemID going in 1st: " + listItem.dataset.itemId)
             updateDatabase(checkbox, listItem.dataset.itemId);
         });
 
@@ -179,7 +245,7 @@
                 productText.classList.remove('bought-text');
                 cancelChkbx.disabled = false;
             }
-
+            console.log("DEBUG: itemID going in 2nd: ", listItem.dataset);
             updateDatabase(checkbox, listItem.dataset.itemId);
         });
     });
@@ -202,6 +268,7 @@ function getCSRFToken() {
 }
 
 function updateDatabase(checkbox, itemId) {
+    console.log("DEBUG; itemId inside updateDatabase: " + itemId)
     let action;
 
     if (checkbox.name === 'cancelled_item') {
@@ -301,5 +368,18 @@ function sendData(itemId, bought, cancelled) {
     }));
 }
 
+//  Summernote for modals
+$('#addProductModal').on('shown.bs.modal', function () {
+    $('#notes').summernote({
+        height: 100,  // Height of  editor
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture']],
+            ['view', ['fullscreen', 'codeview']],
+        ]
+    });
+});
 </script>
 </html>

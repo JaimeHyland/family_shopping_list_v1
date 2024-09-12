@@ -16,9 +16,9 @@ class Shop(models.Model):
         (6, 'Specialist retailer'),
         (7, 'Flatpack furniture'),
         (8, 'Deli & fine foods'),
-        (9, 'Wines and spirits'),
-        
+        (9, 'Wines and spirits'),   
     )
+    
     shop_name = models.CharField(max_length=50, null=False, blank=False)
     slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name = "user_who_created_shop")

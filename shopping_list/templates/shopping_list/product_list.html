@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 
+{% load custom_filters %}
+
 {% block content %}
 
 <div class="col-12 mt-3">
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="row">
-
+        
+        {% if user|is_adult_filter %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add a new product</button>
+        {% else %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal" disabled>Ask your parents to add a new product</button>
+        {% endif %}
         <h1 class="mx-auto">Products</h1>
       </div>
       <div class="row">
@@ -26,13 +32,14 @@
                   </span>
                 </div>
                 <div>
-                  <input type="checkbox" name="selected_products" class="add-to-list" value="{{ product.id }}">
+                  <input type="checkbox" name="selected-products" class="add-or-delete" value="{{ product.id }}">
                 </div>
               </li>
               {% endfor %}
             </ul>
           {% endfor %}
           <button type="submit" id="add-product-to-list" class="btn btn-primary mt-3" disabled>Add marked product(s) to shopping list</button>
+          <button type="submit" id="delete-product" class="btn btn-primary mt-3" disabled>Remove selected product(s) from database</button>
         </form>
       </div>
     </div>
@@ -51,44 +58,48 @@
         <form id="add-product-form" method="POST" action="{% url 'add_product' %}">
           {% csrf_token %}
           <div class="mb-3">
-            <label for="product_name" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="product_name" name="product_name" required>
+            <label for="product_name" class="form-label">Product name</label>
+            <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter a product name." required>
           </div>
         
           <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select class="form-select" id="category" name="category" required>
               {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.category_name }}</option>
+                <option value="{{ category.id }}" {% if category.category_name == 'Groceries' %}selected{% endif %}>
+                  {{ category.category_name }}
+                </option>
               {% endfor %}
             </select>
           </div>
         
           <div class="mb-3">
-            <label for="default_shop" class="form-label">Default Shop</label>
+            <label for="default_shop" class="form-label">Default shop</label>
             <select class="form-select" id="default_shop" name="default_shop" required>
               {% for shop in shops %}
-                <option value="{{ shop.id }}">{{ shop.shop_name }}</option>
+                <option value="{{ shop.id }}" {% if shop.shop_name == 'REWE Hermann-Hesse-Str' %}selected{% endif %}>
+                  {{ shop.shop_name }}
+                </option>
               {% endfor %}
             </select>
           </div>
         
           <div class="mb-3">
-            <label for="default_unit" class="form-label">Default Unit</label>
+            <label for="default_unit" class="form-label">Default unit</label>
             <input type="text" class="form-control" id="default_unit" name="default_unit" required>
           </div>
         
           <div class="mb-3">
-            <label for="default_quantity" class="form-label">Default Quantity</label>
+            <label for="default_quantity" class="form-label">Default quantity</label>
             <input type="number" class="form-control" id="default_quantity" name="default_quantity" value="1" required>
           </div>
 
-          <div class="mb-3"></div>
-            <label for="default_quantity" class="form-label">Notes</label>
-            <input type="text" class="form-control" id="default_quantity" name="default_quantity">
+          <div class="mb-3">
+            <label for="notes" class="form-label">Notes</label>
+            <textarea class="form-control" id="notes" name="notes" placeholder="Enter a note if you want."></textarea>
           </div>
         
-          <button type="submit" class="btn btn-primary">Add Product</button>
+          <button type="submit" class="btn btn-primary">Add product</button>
         </form>
       </div>
     </div>
@@ -104,41 +115,4 @@
   </div>
 </div>
 
-
-{% endblock %}
-
-{% block extra_js %}
-
-<!--javascript to toggle filter enabled<->disabled: Runs any time a checkbox status is changed -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const chkbxs = document.querySelectorAll('.add-to-list');
-      const addBtn = document.getElementById('add-product-to-list');
-
-      // Enable add-product button if any checkbox is enabled, disable it otherwise
-      function toggleButtonState() {
-          const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
-          addBtn.disabled = !anythingChecked;
-      }
-
-      toggleButtonState();
-  
-      // Listen for changes on any checkbox
-      chkbxs.forEach(checkbox => {
-          checkbox.addEventListener('change', toggleButtonState);
-      });
-  });
-  </script>
-
-  <!--javascript to run toast so that the user knows when a new product has failed to be saved 
-  (because its name is identical to an existing one) -->
-  {% if form.errors %}
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Only executed if there are errors in the form
-        var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-        errorToast.show();
-      });
-    </script>
-  {% endif %}
 {% endblock %}

@@ -4,12 +4,14 @@ from channels.layers import get_channel_layer
 from django.views import View
 from .models import ListItem, Product, Shop, Category
 from .forms import ProductForm, ShopForm, CategoryForm
+from utilities.utils import is_adult
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from allauth.account.views import PasswordChangeView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 def welcome_page(request):
@@ -56,13 +58,17 @@ def mark_item(request, item_id, status):
 
     return redirect('shopping_list')
 
+class AdultRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return is_adult(self.request.user)
+
 @method_decorator(login_required, name='dispatch')
 class ShoppingListView(View):
     def get(self, request, *args, **kwargs):
         filter_chosen = request.GET.get('filter_by', 'category')  # Both options are 'category' by default
         order_chosen = request.GET.get('order_by', 'category')
 
-        shopping_list = ListItem.objects.filter(bought=False, cancelled=False)
+        shopping_list = ListItem.objects.filter(bought=False, cancelled=False, current=True)
         
         if filter_chosen == 'shop':
             shopping_list = shopping_list.order_by('shop_bought__shop_name')
@@ -84,17 +90,18 @@ class ShoppingListView(View):
             })
 
     def post(self, request, *args, **kwargs):
-        try:
-            
+        try:   
             item_id = request.POST.get('item_id')
             action = request.POST.get('action')
-
+            print(f"DEBUG: {id}")
+            print(f"DEBUG: {action}")
             if not item_id or not action:
                 print("Bugfix: Invalid request: Missing item_id or action")
                 return HttpResponseBadRequest("Invalid request: Missing item_id or action")
 
             item = get_object_or_404(ListItem, id=item_id)
 
+            
             if action == 'cancel':
                 item.cancelled = True
             elif action == 'uncancel':
@@ -151,7 +158,8 @@ class ProductListView(View):
 class ShopListView(View):
     def get(self, request, *args, **kwargs):
         shopList = Shop.objects.filter(current=True)
-        return render(request, 'shopping_list/shop_list.html', {'shop_list': shopList})
+        types_of_shop = Shop.TYPES_OF_SHOP
+        return render(request, 'shopping_list/shop_list.html', {'shop_list': shopList, 'types_of_shop': types_of_shop})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -212,7 +220,7 @@ class CategoryView(View):
 @method_decorator(login_required, name='dispatch')
 class AddToShoppingListView(View):
     def post(self, request, *args, **kwargs):
-        selected_products = request.POST.getlist('selected_products')
+        selected_products = request.POST.getlist('selected-products')
         creator = request.user
 
         for product_id in selected_products:
@@ -261,7 +269,7 @@ class AddCategoryView(View):
         category_name = request.POST.get('category_name')
         notes = request.POST.get('notes')
 
-        Product.objects.create(
+        Category.objects.create(
             category_name=category_name,
             notes=notes,
         )

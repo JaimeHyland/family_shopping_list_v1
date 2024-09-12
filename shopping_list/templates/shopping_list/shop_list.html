@@ -11,21 +11,18 @@
         <h1 class="mx-auto">Shops</h1>
       </div>
       <div class="row">
-        <form id="shop-list-form" method="GET" action="{% url 'add_to_shopping_list' %}" class="w-100">
-          {% csrf_token %}
-          <ul class="list-group list-group-flush mx-lg-3">
-            {% for shop in shop_list %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center">
-                <span>
-                  <a class="link-success link-opacity-30-hover link-underline-opacity-10"
-                    href="{% url 'shop_detail' slug=shop.slug %}">{{ shop.shop_name }}</a>
-                </span>
-              </div>
-            </li>
-            {% endfor %}
-          </ul>
-        </form>
+        <ul class="list-group list-group-flush mx-lg-3">
+          {% for shop in shop_list %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <span>
+                <a class="link-success link-opacity-30-hover link-underline-opacity-10"
+                  href="{% url 'shop_detail' slug=shop.slug %}">{{ shop.shop_name }}</a>
+              </span>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
   </div>
@@ -44,19 +41,19 @@
           {% csrf_token %}
           <div class="mb-3">
             <label for="shop_name" class="form-label">Shop name</label>
-            <input type="text" class="form-control" id="shop_name" name="shop_name" required>
+            <input type="text" class="form-control" id="shop_name" name="shop_name" placeholder="Enter a shop name."required>
           </div>
           <div class="mb-3">
             <label for="type_of_shop" class="form-label">Type of shop</label>
             <select class="form-select" id="type_of_shop" name="type_of_shop" required>
-              {% for shop in shops %}
-                <option value="{{ shop.id }}">{{ shop.type_of_shop }}</option>
+              {% for value, label in types_of_shop %}
+                <option value="{{ value }}" {% if label == 'Supermarket' %}selected{% endif %}>{{ label }}</option>
               {% endfor %}
             </select>
           </div>
           <div class="mb-3">
             <label for="notes" class="form-label">Notes</label>
-            <input type="text" class="form-control" id="notes" name="notes">
+            <textarea class="form-control" id="notes" name="notes" placeholder="Enter a note if you want."></textarea>
               {% for shop in shops %}
                 <option value="{{ shop.id }}">{{ shop.notes }}</option>
               {% endfor %}
@@ -70,23 +67,4 @@
 </div>
 
 <!--javascript to toggle filter disabled<->disabled: Runs any time a checkbox status is changed -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const chkbxs = document.querySelectorAll('.add-to-list');
-      const addBtn = document.getElementById('add-shop-to-list');
-
-      // Enable add-shop button if any checkbox is enabled, disable it otherwise
-      function toggleButtonState() {
-          const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
-          addBtn.disabled = !anythingChecked;
-      }
-
-      toggleButtonState();
-  
-      // Listen for changes on any checkbox
-      chkbxs.forEach(checkbox => {
-          checkbox.addEventListener('change', toggleButtonState);
-      });
-  });
-  </script>
 {% endblock %}

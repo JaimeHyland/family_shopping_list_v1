@@ -25,7 +25,6 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='account_change_password'),
     path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
-    # path('accounts/password/change/', views.HylandPassworChangeView.as_view(), name='account_change_password'),
     path('admin/', admin.site.urls),
     path('summernote/', include('django_summernote.urls')),
 ]

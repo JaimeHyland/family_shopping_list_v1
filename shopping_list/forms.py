@@ -1,12 +1,16 @@
 from django import forms
 from .models import Product, Shop, Category
 from django.core.exceptions import ValidationError
+from django_summernote.widgets import SummernoteWidget
 
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['product_name', 'category', 'default_quantity', 'default_unit', 'default_shop', 'notes']
+        widgets = {
+            'notes': SummernoteWidget(),
+        }
 
     def clean_product_name(self):
         product_name = self.cleaned_data.get('product_name')
@@ -33,9 +37,15 @@ class ShopForm(forms.ModelForm):
     class Meta:
         model = Shop
         fields = ['shop_name', 'type_of_shop', 'notes',]
+        widgets = {
+            'notes': SummernoteWidget(),
+        }
 
 
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['category_name', 'notes',]
+        widgets = {
+            'notes': SummernoteWidget(),
+        }
