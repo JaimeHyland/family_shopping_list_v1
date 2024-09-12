@@ -10,24 +10,31 @@ Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the 
 
 - [The user story](#the-user-story)
 - [System design](#system-design)
+   * [Authentication](#authentication)
+   * [Django apps](#django-apps)
+      + [Project assessors/Outside users](#project-assessorsoutside-users)
    * [The database structure](#the-database-structure)
+      + [Grouping and filtering products and shopping list items](#grouping-and-filtering-products-and-shopping-list-items)
+      + [Users and user group permissions](#users-and-user-group-permissions)
 - [The website's workflow:](#the-websites-workflow)
-   * [Logging in](#logging-in)
+   * [Authentication](#authentication-1)
    * [Cancelling list items](#cancelling-list-items)
-   * [Buying list items](#buying-list-items)
+   * [Marking list items as bought](#marking-list-items-as-bought)
    * [App database updates for checkbox changes](#app-database-updates-for-checkbox-changes)
-- [Setup and preparation of the development and deployment environments](#setup-and-preparation-of-the-development-and-deployment-environments)
 - [Design and coding philosophy and practice](#design-and-coding-philosophy-and-practice)
    * [App robustness](#app-robustness)
 - [Bug fixes, linting, testing and UX](#bug-fixes-linting-testing-and-ux)
    * [Linting](#linting)
    * [Bugs and debugging](#bugs-and-debugging)
+      + [Database debugging](#database-debugging)
+      + [Debugging App logic](#debugging-app-logic)
    * [Features testing](#features-testing)
    * [Browser and device compatibility](#browser-and-device-compatibility)
    * [UX](#ux)
    * [Final testing and validation before submission](#final-testing-and-validation-before-submission)
 - [Lessons learnt](#lessons-learnt)
    * [Time management](#time-management)
+   * [Technical tools and technical issues resolved ](#technical-tools-and-technical-issues-resolved)
 - [Unresolved technical issues](#unresolved-technical-issues)
 - [Other design questions](#other-design-questions)
    * [Help functions](#help-functions)
@@ -70,6 +77,7 @@ My reasons for choosing a django-based system on a Postgresql database at the ba
 - The most obvious way of satisfying the requirements of my fourth portfolio project on my Code Institute Full-Stack Programming course was to use Django along with Bootstrap, among other technologies.
 - With the time available to me I have made very limited use of bootstrap, and have hardly even begun to explore the possibilities of crispy forms and summernote.
 
+<!-- TOC --><a name="authentication"></a>
 ### Authentication
 I decided that, since the authentication needs of the app are fairly standard (though they do not include a user-managed registration system &ndash; see below), I would use Django-Allauth to handle authentication, with a number of small adjustments.
 
@@ -83,10 +91,12 @@ Even if the App never moves beyond the Hyland family circle, I may yet add in e-
 
 For the moment, though, I've parked that issue.
 
+<!-- TOC --><a name="django-apps"></a>
 ### Django apps
 The family_shopping_list project effectively contains only one Django app: shopping_list, which effectively contains all the custom models and templates in the project. In hindsight, it may have been a better idea, and the code may have been easier to follow (including for me) if its various components had been divided into separate sub-apps.  This may be considered an opportunity for refactoring in future versions of the family shopping list!
 
 
+<!-- TOC --><a name="project-assessorsoutside-users"></a>
 #### Project assessors/Outside users
 For anyone outside the family who needs or wishes to enter the App as a user (as part of their assessment of this project, for example), I will create an extra user for each user status that that person may need. I will then inform that person of the user name and password for each of the identities that they may wish or need to use to access the App's functionalities.
 
@@ -116,6 +126,7 @@ It should be noted (and this applies to all models in the App Database) that eve
 
 It is also possible for Superusers to delete records, but they shouldn't do so except in cases where there is absolutely no alternative.
 
+<!-- TOC --><a name="grouping-and-filtering-products-and-shopping-list-items"></a>
 #### Grouping and filtering products and shopping list items
 The two other bespoke tables of the database are as follows:
 - Shop
@@ -129,6 +140,7 @@ They also have the potential to expand to provide more information to the family
 
 *The basic design of the bespoke tables in the database (some fields have been added to each table/model since this drawing was made) *
 
+<!-- TOC --><a name="users-and-user-group-permissions"></a>
 #### Users and user group permissions
 There are also two important tables generic to Django:
 - User
@@ -144,7 +156,7 @@ While child users can't access many of the pages of the site via the menus, and 
 <!-- TOC --><a name="the-websites-workflow"></a>
 ## The website's workflow:
 
-<!-- TOC --><a name="logging-in"></a>
+<!-- TOC --><a name="authentication-1"></a>
 ### Authentication
 The first thing a new user sees on navigating to the website is a login page. Nobody can get any further without logging in. Users can set the App to remember them (i.e. not to require a new log-in when a new instance of the App is started up on the same device). Once logged in, any user in either group should be able to see the full current shopping list in order of entry (oldest first).  If they're using a modern browser, they should be able to adjust the settings to log them in automatically on second and subsequent visits.
 
@@ -156,7 +168,7 @@ The database is updated as soon as the user confirms the change via the confimat
 
 When the user reloads the page, the page's the cancelled item will disappear.
 
-<!-- TOC --><a name="buying-list-items"></a>
+<!-- TOC --><a name="marking-list-items-as-bought"></a>
 ### Marking list items as bought
 The right-hand checkbox marks the corresponding list item as having been bought. In this case, to facilitate the user's shopping efficiency, no confirmation message is required. The item text is displayed as bought by striking it through with a semi-transparent line, as if it had been marked off using a blunt pencil. If the checkbox is checked by accident, it can be unchecked again in the usual way. I am considering adding a modal message in a later iteration that briefly appears to show the user that their purchase has been registered as bought in the database (not yet implemented).
 
@@ -176,6 +188,7 @@ When anyone checks the *Item bought* checkbox, the text for the item is shown in
 Clicking on any item text will bring the user to an *Item details* screen, where they can see further details on that Item. Adults should be able to edit these details. (This has not yet been correctly implemented.)
 
 
+<!-- TOC --><a name="design-and-coding-philosophy-and-practice"></a>
 ## Design and coding philosophy and practice
 
 <!-- TOC --><a name="app-robustness"></a>
@@ -193,9 +206,11 @@ Due to pressure of time (as a result of what was in hindsight an overambitious a
 ### Bugs and debugging
 Bugs were fixed as they arose function-by-function during development as they arrived. A systematic iterative search for bugs followed by rounds of bugfixing activity has not been implemented. For this, as for all the other incomplete elements in this project, I can only apologise.
 
+<!-- TOC --><a name="database-debugging"></a>
 #### Database debugging
 While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project. The model update history can be seen in the github site within the ./shopping_list/migrations directory.
 
+<!-- TOC --><a name="debugging-app-logic"></a>
 #### Debugging App logic
 There remain a long list of issues with the App that I have not had the time to deal with. Some of these issues relate to the App's integration with cached data, and some are simply holes relating to duplicates, etc.. I have tried to reflect as many of them as possible in the Use Cases for resolution in future iterations of the App.
 
@@ -257,6 +272,7 @@ The following will be done before submission of a later iteration of this projec
 ### Time management
 When faced with the inevitable coding challenges of an inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for human help. In addition, some of my decisions on pages and features to be included were over-ambitious.
 
+<!-- TOC --><a name="technical-tools-and-technical-issues-resolved"></a>
 ### Technical tools and technical issues resolved 
 
 Among many lessons I managed through blood, sweat and tears to learn from were the following:
