@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'cloudinary_storage',
     'crispy_forms',
-    'crispy_bootstrap5',
 ]
 
 LOGIN_URL = 'logged_out_homepage'
