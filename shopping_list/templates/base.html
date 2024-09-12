@@ -137,33 +137,8 @@
 
 
 {% block extra_js %}
-<!--javascript to control the start and end shopping buttons -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const startShoppingForm = document.getElementById('startShoppingForm');
-        const finishShoppingBtn = document.getElementById('finishShoppingBtn');
-        const checkboxes = document.querySelectorAll('.bought-checkbox');
-        
-        let currentShopId = null;
 
-        startShoppingForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        currentShopId = document.getElementById('shop').value;
-        finishShoppingBtn.disabled = false;
-        checkboxes.forEach(checkbox => checkbox.disabled = false);
-        // Get rid of the modal dialogue
-        const modal = bootstrap.Modal.getInstance(document.getElementById('startShoppingModal'));
-        modal.hide();
-        });
-
-        finishShoppingBtn.addEventListener('click', function() {
-        currentShopId = null;
-        finishShoppingBtn.disabled = true;
-        checkboxes.forEach(checkbox => checkbox.disabled = true);
-        });
-    });
-</script>
-<!--javascript to toggle add and delete buttons to enabled<->disabled: Runs any time a checkbox status is changed -->
+<!--javascript to toggle add and delete buttons on product_list template to enabled<->disabled: Runs any time a checkbox status is changed -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const chkbxs = document.querySelectorAll('.add-or-delete');
@@ -198,55 +173,66 @@
 </script>
 {% endif %}
 {% endblock %}
-</body>
 
 <script>
     // Change presentation of list item texts when user changes cancelled or bought checkboxes to True.
     document.addEventListener('DOMContentLoaded', function () {
     const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
     const completedChkbxs = document.querySelectorAll('.completed-chkbx');
-
+    
+    // loop through each cancel checkbox
     cancelChkbxs.forEach(function (checkbox) {
+        // Record the checked or unchecked state of the checkbox
+        checkbox.dataset.initialChecked = checkbox.checked;
+        // If a change of checked status is detected on any cancelled checkbox, if the checkbox
+        // is now checked, then add it mark it as cancelled in the db and disable the bought checkbox, 
+        // otherwise unmark it as cancelled in the db and enable the the bought checkbox.
         checkbox.addEventListener('change', function () {
-            const listItem = this.closest('.list-group-item');
-            const productText = listItem.querySelector('span');
-            const completedChkbx = listItem.querySelector('.completed-chkbx');
+            if (this.checked.toString() !== this.dataset.initialChecked === 'true'){
+                const listItem = this.closest('.list-group-item');
+                const productText = listItem.querySelector('span');
+                const completedChkbx = listItem.querySelector('.completed-chkbx');
 
-            if (this.checked) {
-                productText.classList.remove('bold-text');
-                productText.classList.add('text-muted');
-                completedChkbx.disabled = true;
-            } else {
-                productText.classList.remove('text-muted');
-                productText.classList.add('bold-text');
-                completedChkbx.disabled = false;
+                if (this.checked) {
+                    productText.classList.remove('bold-text');
+                    productText.classList.add('text-muted');
+                    completedChkbx.disabled = true;
+                } else {
+                    productText.classList.remove('text-muted');
+                    productText.classList.add('bold-text');
+                    completedChkbx.disabled = false;
+                }
+                //update the database with value for cancel checkbox
+                updateDatabase(checkbox, listItem.dataset.itemId);
+                this.dataset.initialChecked = this.checked;
             }
-            console.log("DEBUG: itemID going in 1st: " + listItem.dataset.itemId)
-            updateDatabase(checkbox, listItem.dataset.itemId);
         });
-
-        if (checkbox.checked) {
-            const listItem = checkbox.closest('.list-group-item');
-            const completedChkbx = listItem.querySelector('.completed-chkbx');
-            completedChkbx.disabled = true;
-        }
     });
 
-    completedChkbxs.forEach(function (checkbox) {
-        checkbox.addEventListener('change', function () {
-            const listItem = this.closest('.list-group-item');
-            const productText = listItem.querySelector('span');
-            const cancelChkbx = listItem.querySelector('.cancel-chkbx');
 
-            if (this.checked) {
-                productText.classList.add('bought-text');
-                cancelChkbx.disabled = true;
-            } else {
-                productText.classList.remove('bought-text');
-                cancelChkbx.disabled = false;
+    // Loop through each completed checkbox the process is similar to the one described above!
+    completedChkbxs.forEach(function (checkbox) {
+        checkbox.dataset.initialChecked = checkbox.checked;
+
+        checkbox.addEventListener('change', function () {
+            if (this.checked.toString() !== this.dataset.initialChecked === 'true') {
+
+                const listItem = this.closest('.list-group-item');
+                const productText = listItem.querySelector('span');
+                const cancelChkbx = listItem.querySelector('.cancel-chkbx');
+
+                if (this.checked) {
+                    productText.classList.add('bought-text');
+                    cancelChkbx.disabled = true;
+                } else {
+                    productText.classList.remove('bought-text');
+                    cancelChkbx.disabled = false;
+                }
+                //update the database with value for bought checkbox
+                updateDatabase(checkbox, listItem.dataset.itemId);
+
+                this.dataset.initialChecked = this.checked;
             }
-            console.log("DEBUG: itemID going in 2nd: ", listItem.dataset);
-            updateDatabase(checkbox, listItem.dataset.itemId);
         });
     });
 });
@@ -268,9 +254,9 @@ function getCSRFToken() {
 }
 
 function updateDatabase(checkbox, itemId) {
-    console.log("DEBUG; itemId inside updateDatabase: " + itemId)
     let action;
 
+    // identify action based on whether it's the cancelled or completed checkbox for the item
     if (checkbox.name === 'cancelled_item') {
         action = checkbox.checked ? 'cancel' : 'uncancel';
     } else {
@@ -382,4 +368,5 @@ $('#addProductModal').on('shown.bs.modal', function () {
     });
 });
 </script>
+</body>
 </html>

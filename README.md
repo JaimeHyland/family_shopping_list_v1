@@ -42,36 +42,36 @@ Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the 
 <!-- TOC --><a name="the-user-story"></a>
 ## The user story
 
-The Hyland family is a four-headed monster that consumes a shocking lot of groceries (especially chocolate) every week. The main shopper in the family (the father of the household ... me) does his best but often finds it difficult to keep track of what's in stock and what's not.  The other three family members (the mother of the household, let's call her Jannett, and the two children, Lillian and Séamus) often tell him what from their point of view is missing and what new purchases might be appreciated.  They also occasionally(more than occasionally in Jannet's case) do a bit of shopping!
+The Hyland family is a four-headed monster that consumes a shocking lot of groceries (especially chocolate) every week. The main shopper in the family (the father of the household ... me) does his best but often finds it difficult to keep track of what's in stock and what's not.  The other three family members (the mother of the household, let's call her Jannett, and the two children, Lillian and Séamus) often tell him what from their point of view is missing and what new purchases might be appreciated.  They also occasionally (more than occasionally in Jannet's case) do a bit of shopping!
 
-Since I'm currently learning full-stack programming with Code Institute and am required by my course to complete a Full-Stack Web application for my fourth portfolio project, I thought this requirement would provide a good opportunity to develop a basic prototype (or minimally viable product - MVP) of a shopping list app designed specifically for our family needs, for further development at a later date. The objective of this project is therefore to create just such a MVP. I recognise that I haven't even managed to get to that stage of development of the project, but hope to do so in a second round.
+Since I'm currently learning full-stack programming with Code Institute and am required by my course to complete a Full-Stack Web application for my fourth portfolio project, I thought this requirement would provide a good opportunity to develop a basic prototype (or minimally viable product - MVP) of a shopping list app designed specifically for our family needs, for further development at a later date. The objective of this project is therefore to create just such a MVP.
 
-We decided that the MVP should include the following features:
+We initially decided that the MVP should include the following features:
 - All users, upon logging in, should see a list of the products entered into the system as needing buying, but have not yet been marked as bought (the shopping list).
 - All users should be able to mark individual items on the shopping list as bought or cancelled.
-- The adults (i.e. Annett and myself) should be able to govern which products should be included in shopping lists and which sources (shops, supermarkets, etc.) should be allowed.
-- The children should be able to suggest new products and sources to include in the system, subject to the approval of us two adults. (not yet implemented)
-- It should be possible to add a description to each suggested and/or approved product. (only implemented for admin users in the admin pages)
-- The children should be able to add a description only to a suggested product and should be unable to edit an approved product. (not yet implemented)
-- It should be possible to add only approved products to the shopping list. (not yet implemented)
-- Products should be divided into categories and default sources (e.g. shops and supermarkets) and the shopping list should be filterable using those categories and defaults. (not yet implemented)
-- The children should not be able to cancel items from the shopping list but should be able to mark items as bought. The adults should be able to do both. (not yet implemented)
+- The adults (i.e. Annett and myself) should be able to govern which products should be included in shopping lists and which sources (shops, supermarkets, etc.) should be included in the shopping management system.
+- The children should eventually be able to suggest new products and sources to include in the system, subject to the approval of us two adults. (not yet implemented)
+- It should be possible to add a description to each suggested and/or approved product. (only implemented without any formatting)
+- The children should be able to add a description only to a suggested product and should be unable to edit an approved product.
+- It should be possible to add only already recorded products to the shopping list.
+- Products should be divided into categories and default sources (e.g. shops) and the shopping list should eventually be filterable using those categories and defaults. (not yet implemented)
+- Both adults and children should be able to cancel items from the shopping list amd to mark items as bought.
 - There should be some mechanism to control which edits should take priority when more than one person at a time is editing the data. I have experimented (so far unsuccessfully) with Django.channels and WebSockets to implement a listening system that notifies users when another user has updated a field in any records they currently have loaded onto their UI. (not yet implemented)
-- There should be no mechanism for outsiders to register to use the app. The superuser should the only person(s) able to add or delete a user from the app.
+- There should be no mechanism for outsiders to register to use the app. The superuser should the only person(s) able to add or delete a user from the app. This situation might change in the future, if other families become interested in using the app, but for the moment the MVP works fine with users being added and managed by the superuser by hand.
 - Anyone not logged in or stumbling on the site accidentally (or maliciously!!) should see a page asking them to log in. If they can't log in, then the simply don't get to see the shopping list.
 
 <!-- TOC --><a name="system-design"></a>
 ## System design
-Some flow charts portraying a selection of important Hyland family shopping list workflows are yet to be provided.
 
-I prepared a series of outline flow charts in consultation with Jannett on the basis of our family needs and habits. Once we'd agreed the basic processes, I began thinking about how to actually program the various functionalities the family needs in the short term.
+Once we'd agreed the basic processes (see above), I began thinking about how to actually program the various functionalities the family needs in the short term.
 
 My reasons for choosing a django-based system on a Postgresql database at the back end, with some important appearances from Bootstrap on the front end, were basically twofold:
 - Django offers a seamless way of creating a simple full-stack website quickly and corresponding to the family's needs and habits.
 - The most obvious way of satisfying the requirements of my fourth portfolio project on my Code Institute Full-Stack Programming course was to use Django along with Bootstrap, among other technologies.
+- With the time available to me I have made very limited use of bootstrap, and have hardly even begun to explore the possibilities of crispy forms and summernote.
 
 ### Authentication
-I decided that, since the authentication needs of the app are fairly standard, I would use Django-Allauth to handle authentication, with a number of small adjustments.
+I decided that, since the authentication needs of the app are fairly standard (though they do not include a user-managed registration system &ndash; see below), I would use Django-Allauth to handle authentication, with a number of small adjustments.
 
 Chief among the adjustments I made to the standard Django-Allauth process is that I removed any registration process managed by prospective users themselves. Since the App is (for the moment at least) for the exclusive use of the Hyland family (and honorary members of the Hyland family), I decided that the App Boss (me) would handle any registration process manually using the Django Admin structure.
 
@@ -87,10 +87,10 @@ For the moment, though, I've parked that issue.
 The family_shopping_list project effectively contains only one Django app: shopping_list, which effectively contains all the custom models and templates in the project. In hindsight, it may have been a better idea, and the code may have been easier to follow (including for me) if its various components had been divided into separate sub-apps.  This may be considered an opportunity for refactoring in future versions of the family shopping list!
 
 
-#### Project assessment/Outside users
+#### Project assessors/Outside users
 For anyone outside the family who needs or wishes to enter the App as a user (as part of their assessment of this project, for example), I will create an extra user for each user status that that person may need. I will then inform that person of the user name and password for each of the identities that they may wish or need to use to access the App's functionalities.
 
-I'll ask them to change their password on first logging in as each user.
+I'll ask them to change their password on first logging in as each user. In a future iteration I'll route new users automatically through the change password process upon first logging in!
 
 I'm happy enough to use the original allauth change_password template for this purpose, except that I don't like the way the standard Django-allauth functionality appears to leave the user stranded on the password_change_done page when that user has changed their password. However, that's another issue I've parked for the moment due to lack of time.
 
@@ -98,26 +98,26 @@ I'm happy enough to use the original allauth change_password template for this p
 <!-- TOC --><a name="the-database-structure"></a>
 ### The database structure
 
-I decided that the most convenient and forward-looking way to implement the above requirements (and possible future requirement) at the back end was to base the system on two main tables:
-- a Product table, listing all the articles approved for inclusion in the shopping list
-- a ListItem table (the actual shopping list), in which a new record is created every time a new item is added to the shopping list by picking a product to be bought
+I decided that the most convenient and forward-looking way to implement the above requirements (and possible future requirements) at the back end was to base the system on essentially two main tables:
+- a Product table, listing all the articles approved for inclusion in the shopping list;
+- a ListItem table (the actual shopping list), in which a new record is created every time a new item is added to the shopping list by picking a product to be bought from the curated product table.
 
-The other two tables (Category and Shop - see below) are designed exclusively (for the moment) to group the records in the Product and ListItem table to make it easier for the user to create the shopping list and to read and update the shopping list while out shopping.
+The other two tables (Category and Shop - see below) are (for the moment) designed exclusively to group the records in the Product and ListItem table to make it easier for the user to create the shopping list and to read and update the shopping list while out shopping.
 
-This simple structure should allow the user to pick products out from a pre-existing product list and add them to the shopping list, change the quantity of the item required, add notes for shoppers, etc.. Some users (the adults) should be able to add, remove and modify product records on the product list, thus managing the sorts of thing that can end up on the shopping list.
+This simple structure should allow the user to pick products out from a pre-existing product list and add them to the shopping list, change the quantity of the item required, add notes for shoppers, etc.. Some users (the adults) should be able to add, remove and modify product records on the product list, thus managing the sorts of thing that can end up on the shopping list. The process for ordinary users to remove product records is not yet fully implemented.
 
-When a shopping list item is either bought or cancelled, it will stop appearing on the shopping list (for details, see below), but it will not be removed from the database. This is so that the Shopping List App will always contain a record of a purchase or cancellation, along with any notes a user enters into a shopping list record. This might allow the App manager to see how many, say, blocks of white cheddar were bought in the previous month, for example. In the future too, such details as purchase price might be added as new fields to the model and can be used as a permanent record of purchases, with all the information one might require to assess costs and other details of the family's purchasing patterns.
+When a shopping list item is either bought or cancelled, it will stop appearing on the shopping list (for details, see below), but it will not be removed from the database. This is so that the Shopping List App will always contain a record of a purchase or cancellation, along with any notes a user enters into a shopping list record. This might in the future allow the App manager to see how many, say, blocks of white cheddar were bought in the previous month, for example. In the future too, such details as purchase price might be added as new fields to the model and can be used as a permanent record of purchases, with all the information one might require to assess costs and other details of the family's purchasing patterns.
 
-It may even provide a first step to integrating electronic receipts into the list.
+It may even provide a logical basis upon which the first steps towards integrating electronic receipts into the App in a useful way.
 
-So, there is only one ongoing and ever-changing shopping list, that has products added to it and removed from it as they are bought or cancelled. Removal from the shopping list, however, does not mean deletion from the ListItem table; a list item being marked as bought or cancelled merely changes the value in the appropriate boolean field, with the effect that the item will disappear from the list (for details, see below).
+So, what we have is one and only one ongoing and ever-changing shopping list, which has products added to and removed from it as they are bought or cancelled. It's worth repeating, however, that removal from the shopping list does not mean deletion from the ListItem table; a list item being marked as bought or cancelled merely changes the value in the appropriate boolean field, with the effect that the item will disappear from the list, but may still be accessed in future in other ways by users for a variety of purposes (for details, see below).
 
-It should be noted (and this applies to all models in the App Database) that even if a record is actually 'deleted' from the App, it is not ordinarily completely deleted from the database. What happens is that it loses its currency: that is to say, the flag 'current' in the database record, which is set by default to True is changed to False. All records whose boolean value 'current' is False are completely ignored by the App. Where they need to be restored for some reason or another, only the Superuser can do so using Django's Admin feature.
+It should be noted (and this applies to all models in the App Database) that even if a record is actually 'deleted' from the App, it is not ordinarily completely deleted from the database. What happens is that it loses its currency: that is to say, the flag 'current' in the database record, which is set by default to True is changed to False. All records whose boolean value 'current' is False are completely ignored by the App. Where they need to be restored for any reason, only the Superuser can do so using Django's Admin feature.
 
 It is also possible for Superusers to delete records, but they shouldn't do so except in cases where there is absolutely no alternative.
 
 #### Grouping and filtering products and shopping list items
-The other bespoke tables of the database are as follows:
+The two other bespoke tables of the database are as follows:
 - Shop
 - Category
 
@@ -130,7 +130,7 @@ They also have the potential to expand to provide more information to the family
 *The basic design of the bespoke tables in the database (some fields have been added to each table/model since this drawing was made) *
 
 #### Users and user group permissions
-There are also two tables generic to Django:
+There are also two important tables generic to Django:
 - User
 - Group
 
@@ -138,17 +138,19 @@ The purpose of the first of these from our point of view is to manage users and 
 
 Child users are allowed only to add products to the shopping list and to buy and cancel items already on the shopping list. In a future iteration it might be a good idea to allow children to request that products to the product list and of shops and categories from their respective tables.
 
+While child users can't access many of the pages of the site via the menus, and while some pages display differently depending on the user group of the current user, with some buttons enabled or disabled as appropriate and with some data made read-only or editable as appropriate, in some cases, children can use the browser's url bar to access some of the pages not accessible from the menus or buttons. This is an issue for a future iteration.
+
 
 <!-- TOC --><a name="the-websites-workflow"></a>
 ## The website's workflow:
 
 <!-- TOC --><a name="logging-in"></a>
 ### Authentication
-The first thing a user sees on navigating to the website is an login page. Nobody can get any further without logging in. Users can set the App to remember them (i.e. not to require a new log-in when a new instance of the App is started up on the same device). Once logged in, any user in either group should be able to see the full current shopping list in order of entry (oldest first).
+The first thing a new user sees on navigating to the website is a login page. Nobody can get any further without logging in. Users can set the App to remember them (i.e. not to require a new log-in when a new instance of the App is started up on the same device). Once logged in, any user in either group should be able to see the full current shopping list in order of entry (oldest first).  If they're using a modern browser, they should be able to adjust the settings to log them in automatically on second and subsequent visits.
 
 <!-- TOC --><a name="cancelling-list-items"></a>
 ### Cancelling list items
-Each item on the shopping list will have two checkboxes; one on the left and the other on the right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirmation message. This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again.
+Each item on the shopping list will have two checkboxes; one on the left and the other on the right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirmation message (not yet implemented). This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again.
 
 The database is updated as soon as the user confirms the change via the confimation message (a modular webpage). Undoing the cancellation will update the database again.
 
@@ -156,7 +158,7 @@ When the user reloads the page, the page's the cancelled item will disappear.
 
 <!-- TOC --><a name="buying-list-items"></a>
 ### Marking list items as bought
-The right-hand checkbox marks the corresponding list item as having been bought. In this case, to facilitate the user's shopping efficiency, no confirmation message is required. The item text is displayed as bought by striking it through with a semi-transparent line, as if it had been marked off using a blunt pencil. If the checkbox is checked by accident, it can be unchecked again in the usual way. I am considering adding a modal message in a later iteration that briefly appears to show the user that their purchase has been registered as bought in the database.
+The right-hand checkbox marks the corresponding list item as having been bought. In this case, to facilitate the user's shopping efficiency, no confirmation message is required. The item text is displayed as bought by striking it through with a semi-transparent line, as if it had been marked off using a blunt pencil. If the checkbox is checked by accident, it can be unchecked again in the usual way. I am considering adding a modal message in a later iteration that briefly appears to show the user that their purchase has been registered as bought in the database (not yet implemented).
 
 <!-- TOC --><a name="app-database-updates-for-checkbox-changes"></a>
 ### App database updates for checkbox changes
@@ -165,31 +167,20 @@ Changes to the checkboxes are written directly to the database. I am still consi
 
 They should also see several buttons:
 - a button inviting the user to add an item to the shopping list
-- a button inviting the user to filter/or group shopping list items either by category or by shop
-- a button inviting the user refresh the view, so that newly cancelled 
+- a button inviting the user to filter/or group shopping list items either by category or by shop (not yet implemented)
+- a button inviting the user refresh the view, so that newly cancelled and bought items no longer appear in any form on the list (not yet implemented &ndash; refreshing the page will have the same effect). 
 
-Unfortunately none of these buttons have yet been given any functionality.
-
-There should be two checkboxes attached to each item on the shopping, though only one of them should be enabled for children:
-- a *Cancel item* checkbox on the left, which should only be enabled for adults (this distinction has not yet been implemented)
-- an *Item bought* checkbox on the right, which everyone should be able to check
-
-When an adult checks the *Cancel item* checkbox, the text for the item is shown in a paler grey and the *Item bought* checkbox is disabled.
+When a user checks the *Cancel item* checkbox, the text for the item is shown in a paler grey and the *Item bought* checkbox is disabled.
 When anyone checks the *Item bought* checkbox, the text for the item is shown in strikethrough font (with the strikethrough line shown in dark gray; a bit like a blunt pencil) and the *Cancel item* checkbox is disabled. 
 
-Clicking on any item text will bring the user to an *Item details* screen, where they can see further details on that Item. Adults can edit these details. (The distinction between Adults and Children has not yet been implemented.)
+Clicking on any item text will bring the user to an *Item details* screen, where they can see further details on that Item. Adults should be able to edit these details. (This has not yet been correctly implemented.)
 
-<!-- TOC --><a name="setup-and-preparation-of-the-development-and-deployment-environments"></a>
-## Setup and preparation of the development and deployment environments
 
-A later iteration of this project will include a detailed explanation of how I set up and configured both my development and deployment environments.
-
-<!-- TOC --><a name="design-and-coding-philosophy-and-practice"></a>
 ## Design and coding philosophy and practice
 
 <!-- TOC --><a name="app-robustness"></a>
 ### App robustness
-Aside from the usual error handling in the code; using *try, except, [finally]* structures, for example, perhaps the main protection against unhandled errors is the practice of strictly circumscribing what the user is allowed to do by the App. The vast majority of functions are limited to choices from a closed list or choosing boolean values via checkboxes, etc.. The main defence against any possibble malicious use of the App is simply not allowing anyone but close family members (A further reassurance is that none of the family members are currently capable of mounting code injection attacks, or any other potential malicious attack on the App or its underlying database).
+Aside from the usual error handling in the code; using *try, except, [finally]* structures, for example, perhaps the main protection against unhandled errors is the practice of strictly circumscribing what the user is allowed to do by the App. The vast majority of functions are limited to choices from a closed list or choosing boolean values via checkboxes, etc.. The main defence against any possible malicious use of the App is simply not allowing anyone but close family members (A further reassurance is that none of the family members are currently capable of mounting code injection attacks, or any other potential malicious attack on the App or its underlying database).
 
 <!-- TOC --><a name="bug-fixes-linting-testing-and-ux"></a>
 ## Bug fixes, linting, testing and UX
@@ -203,14 +194,14 @@ Due to pressure of time (as a result of what was in hindsight an overambitious a
 Bugs were fixed as they arose function-by-function during development as they arrived. A systematic iterative search for bugs followed by rounds of bugfixing activity has not been implemented. For this, as for all the other incomplete elements in this project, I can only apologise.
 
 #### Database debugging
-While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project.
+While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project. The model update history can be seen in the github site within the ./shopping_list/migrations directory.
 
 #### Debugging App logic
 There remain a long list of issues with the App that I have not had the time to deal with. Some of these issues relate to the App's integration with cached data, and some are simply holes relating to duplicates, etc.. I have tried to reflect as many of them as possible in the Use Cases for resolution in future iterations of the App.
 
 <!-- TOC --><a name="features-testing"></a>
 ### Features testing
-Of course I did ongoing testing of the limited features I have implemented in both the development and deployment environment as I went through each ticket on my Kanban board (which can be found at https://github.com/users/JaimeHyland/projects/3/views/1). The App is not yet mature enough for it to make sense to subject it to a final round of features testing.
+Of course I did ongoing testing of the limited features I have implemented in both the development and deployment environment as I went through each ticket on my Kanban board (which can be found at https://github.com/users/JaimeHyland/projects/3/views/1). The App is not yet mature enough for it to make sense to subject it to a systematic final round of features testing.
 
 <!-- TOC --><a name="browser-and-device-compatibility"></a>
 ### Browser and device compatibility
@@ -226,27 +217,32 @@ Owing to lack of time and resources, I was unable to do any testing on any legac
 
 <!-- TOC --><a name="ux"></a>
 ### UX
-The App is not yet mature enough for it to require user experience feedback from its four potential users (one of which being yours truly). It'll receive lots of informal UX feedback (whether I like it or not!) once it achieves Beta status.
+The App is not yet mature enough for it to require user experience feedback from its four potential users (one of which being yours truly). It'll no doubt receive lots of informal UX feedback (whether I like it or not!) once it achieves Beta status.
 
 While the detailed information available on each product and shopping list item suits the UX needs of the Hyland family, as the Superuser is highly motivated to maintain the system assiduously, if the App should ever be converted into App generally usable by other individuals and families, the presence of such an assiduous superuser can't be guaranteed. As a result it may be necessary to "re-inject more simplicity" into the App logic, perhaps giving people the choice of using it as a simple smartphone-based shared list, containing nothing more than a list of the items that need buying, with no background details.
 
 Injecting such simplicity as an option would require a good deal of thought, consultation, coding and testing.
 
-There are also a number of issue in terms of UX that still need to be dealt with: for example, the worklflow for changing password leaves the user in a cul de sac without obvious way of getting back to the home page without either browsing backwards in the browser or directly editing the change_password_done template's url. The change_password_done template clearly needs some customisation. This constitutes another opportunity for refactoring in the future.
+There are also a number of issue in terms of UX that still need to be dealt with: for example, the workflow for changing password leaves the user in a cul de sac without obvious way of getting back to the home page without either browsing backwards using the browser back arrow or directly editing the change_password_done template's url. The change_password_done template clearly needs some customisation. This constitutes yet another opportunity for refactoring in the future.
 
-Another issue with the UX is that users who like to use the browser's back and forward buttons will note that pages often do not change for two, three or sometimes even more clicks or taps, as product, shop and category pages have functions cause the page to reload, counting as a different instance of the page. This isn't a very serious issue, but it might be worth keeping in mind for repair in the future.
+Another issue with the UX is that users who like to use their browser's back and forward arrows will note that pages often do not change for two, three or sometimes even more clicks or taps, as product, shop and category pages have functions cause the page to reload, counting as a different instance of the page. This isn't a very serious issue, but it might be worth keeping in mind for repair in the future.
 
 The very central role of the app &ndash;its facility to add products to the list and mark them off as they are bought&ndash; still has one deceptively complex issue: it allows more than one instance of each object to be added to the list. The user should interpret this as meaning that more than one of that product should be bought, but it would be far clearer to users if there was only one item on the list with an instruction to buy two of them. This is something that sadly has to be left to another iteration of development.
 
-For the moment I'm going to assume that the facility for the shopper so be able to simply tick stuff off the list as it's bought is paramount. 
+For the moment I'm going to assume that the facility for the shopper so be able to simply tick stuff off the list as it is bought is more important than an ability to count units.
 
 <!-- TOC --><a name="final-testing-and-validation-before-submission"></a>
 ### Final testing and validation before submission
 
-All all console.log and print statements designed to facilitate the ongoing debugging process were carefully removed from the site's root directory and all child directories.
+This iteration
+- All all console.log and print statements designed to facilitate the ongoing debugging process were carefully removed from the site's root directory and all child directories.
+- All internal links (from menus, buttons and the various list items) have been smoke-checked systematically.
+
+See the text above for details of features and links that have not been fully implemented, especially features whose foundations can be seen in the current code.
 
 The following will be done before submission of a later iteration of this project:
-- All internal and external links will be smoke-checked systematically.
+- The two steps taken in the present iteration will be repeated.
+- Any external links that may be added will be tested.
 - A systematic test on each of the machines and at each of the effective resolutions listed above (in portrait and landscape mode where appropriate) for:
     - Obvious visual issues in relation to accessibility, responsiveness and functionality.
     - The correct functioning of the above-listed functions.
@@ -259,18 +255,18 @@ The following will be done before submission of a later iteration of this projec
 
 <!-- TOC --><a name="time-management"></a>
 ### Time management
-When faced with the inevitable coding challenges of an inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for help. In addition, some of my decisions on pages and features to be included were over-ambitious.
+When faced with the inevitable coding challenges of an inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for human help. In addition, some of my decisions on pages and features to be included were over-ambitious.
 
 ### Technical tools and technical issues resolved 
 
 Among many lessons I managed through blood, sweat and tears to learn from were the following:
 - The use of the django shell (*'python3 manage.py shell'*) to run queries without altering the core code. 
 - The use of pre-saved queries in a management/command/[command_file_name].py file (along with various issues attached to using it, which took me quite some time to sort out!)
-- the use of websockets via django's channels and daphne packages was one of the biggest challenges I faced in developing this app. I depended heavily on a [tutorial](https://channels.readthedocs.io/en/stable/tutorial/index.html) on how to make a simple messaging app using the two packages that I found in the django documentation.
+- the use of websockets via django's channels and daphne packages was one of the biggest challenges I faced in developing this app. I depended heavily on a [tutorial](https://channels.readthedocs.io/en/stable/tutorial/index.html) on how to make a simple messaging app using the two packages that I found in the django documentation. While I learnt a lot in working here, I have not yet managed to achieve what I wished with these asynchronous technologies in the current App. See next section.
 
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
-The major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App.
+The major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App so far.
 
 <!-- TOC --><a name="other-design-questions"></a>
 ## Other design questions
@@ -310,8 +306,8 @@ I used some code I found at [https://github.com/derlin/](https://derlin.github.i
 
 <!-- TOC --><a name="other-credits"></a>
 ### Other credits
-While the current state of this project suggests that any credits for the work done would be premature. However, I would still like to thank my fellow students for their helpful suggestions and support, and in particular to my Student Welfare person, for their inspiration, encouragement and help in combatting impostor syndrome! But mainly for their patience.
+I would still like to thank my fellow students for their helpful suggestions and support, and in particular to my Student Welfare person, for their inspiration, encouragement and help in combatting impostor syndrome! But mainly for their patience.
 
-Code Institute's excellent tutoring team also deserve a mention for their help so far, and for the help they'll surely be giving me in at least one future iteration of this project that I'm assuming will be necessary. Aside from my personal student care, I also have to thank the entire student care team for their flexibility ... and patience.
+Code Institute's excellent tutoring team also deserve a special mention for their help, which they have consistently given in an open, friendly, encouraging, knowledgeable and professional manner. Aside from my personal student care, I also have to thank the entire student care team for their flexibility ... and patience.
 
-I also feel the need to thank you, the project assessor, also for your patience.
+I also feel the need to thank you, my second project assessor, for your patience and understanding of both the complexity, overambition and imperfections of this project.
