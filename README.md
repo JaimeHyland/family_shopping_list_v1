@@ -191,9 +191,74 @@ Clicking on any item text will bring the user to an *Item details* screen, where
 <!-- TOC --><a name="design-and-coding-philosophy-and-practice"></a>
 ## Design and coding philosophy and practice
 
+### Development, implementation and deployment environment
+All the code created during this project was written using gitpod.io as my IDE, with version control using Git, storing all code on Github.
+
+The resulting App was deployed to a Heroku environment following an early deploy approach (the App was deployed at an early stage of development in order to see progress early in the development cycle and to avoid last-minute deployment surprises). After initial deployment, the app code was pushed to the Heroku production environment on every commit, with all testing done on the development environment for that commit repeated on the production environment.
+
+The Debug setting was not hard set to No, but was instead handled by an environment variable (set to 'True' in the development environment via an env.py file and 'False' in production via a Heroku Config Var).
+
+
 <!-- TOC --><a name="app-robustness"></a>
-### App robustness
+### App robustness in code
 Aside from the usual error handling in the code; using *try, except, [finally]* structures, for example, perhaps the main protection against unhandled errors is the practice of strictly circumscribing what the user is allowed to do by the App. The vast majority of functions are limited to choices from a closed list or choosing boolean values via checkboxes, etc.. The main defence against any possible malicious use of the App is simply not allowing anyone but close family members (A further reassurance is that none of the family members are currently capable of mounting code injection attacks, or any other potential malicious attack on the App or its underlying database).
+
+
+## Registering for Heroku and using it
+
+<!-- TOC --><a name="initial-registration"></a>
+### Initial registration
+
+My first step to facilitate deploying my App on the Heroku Python environment was to add my app's dependencies into my requirements.txt file (which the Heroku environment refers to when installing the necessary features on creation). I do this by running `` pip3 freeze > requirements.txt``, which collects all necessary installations on the Gitpod workspace and writes them into the requirements.txt file.
+
+The next step for someone completely new to Heroku would have been to create an account with Heroku at heroku.com, clicking on "Sign up for free" and filling out the sign-up form (using a genuine email address and with Role as Student and country as the country in which I currently live), and then clicking "Create free account". One would then need to confirm via the validation email sent by Heroku, set a password and log in, accepting Heroku's terms of service.  Heroku requires a real 16-digit credit or debit card for all its accounts and requires users to implement a minimum two-step validation process to use its hosting services. One then has to choose a form of validation. I originally chose a process in which a code number is sent to my smartphone every time I log in log-in via Salesforce's Authenticator app.
+
+<!-- TOC --><a name="activating-code-institutes-heroku-student-pack"></a>
+### Activating Code Institute's Heroku Student Pack
+
+Once one's Heroku account is successfully set up, Code Institute students would need to navigate to www.heroku.com/github-students, click on the "Get the student offer" option, verify their status as a Github student and then click "Authorize heroku". One would then have to verify the previoiusly entered billing information, confirm the credit card details and then enter one's first and last names, setting "Code Institute" as the school name, and pressing "Send". On the dialog that would then open, one needs to indicate agreement with the Heroku Terms and Conditions by pressing "Agree". With that, registration as a Code Institute student would be complete and after a short interval, the sum of credits agreed between Code Institute and Heroku for Full-Stack Programming students will be added to one's Platform credits.
+
+To get the hours of server time I need from Heroku, I needed to activate Eco dynos to allow all my apps to work. To set up the service, I went into the billing tab of on my dashboard and clicked on "Subscribe to Eco". After browsing through the information on the page, I clicked on Subscribe and confirmed that my subscription was now in existence- I then exited Heroku.
+
+Rather nicely, these Eco Dynos are designed go to sleep after a period of inactivity, so that I don't have to pay for server time that I'm not using.
+
+
+<!-- TOC --><a name="setting-up-our-app-in-the-heroku-environment"></a>
+### Setting up my App in the Heroku environment
+
+As this was not the first time I have used Heroku using the Student offer organised by Code Institute, I didn't have to go through the above complex rigmarole again. I simply logged into my personal Heroku dashboard using the above-described two-factor authentication process and created a new Heroku project using the "New" button on that dashboard, gave it the app name "family-shopping-list-v1", chose "Europe" as its region and then pressed "Create App". I then clicked on the "Settings" tab on the app page and clicked on "Reveal Config Vars". From there I created five configuration variables (Config Vars):
+- CLOUDINARY_URL: the URL of the cloudinary environment from where Heroku will obtain the static files used by the deployed app
+- DATABASE_URL: where my postgres database makes its home
+- DEBUG: set at 0 to prevent public access to detailed debugging information, which might allow hackers to reverse engineer my code for nefarious purposes
+- SECRET_KEY: this key is required in order to protect a number of security-critical Django processes, including, but not limited to the generation of CSRF tokens
+- DISABLE_COLLECTSTATIC: initially set to 1, later changed to 0
+
+All of these configuration variables have an equivalent in the env.py file in my development environment. All values in the env file are identical to those shown above, with the exception of the DEBUG variable, which is set to 'True' in env.py, so that I can see a detailed description of errors in my code while working. The file is excluded from Git version management, and therefore does not get written to the deployed environment, as it is designed for use only in development.  A simply piece of code in the settings.py file ensures that the deployed app searches Heroko's Config Vars rather than looking for the absent env.py file:
+```
+if os.path.isfile('env.py'):
+    import env
+[...]
+DEBUG = os.environ.get('DEBUG')
+```
+
+This approach prevents me from having to remember to manually change True to False in my code every time I commit and deploy a new version of my app to Heroku.
+
+Instead of using gunicorn in the command to use the webserver, I have opted to use Django's Daphne toolset, which allows my program to run asynchronously using channel layers via the Channels add-on, also available within the Django toolset. Both packages are added to the list of INSTALLED_APPS in the settings file, and are naturally also listed in the requirements.txt file with the appropriate version numbers to ensure that they're installed correctly by Heroku in the deployed environment.
+
+The instruction for Heroku deployment that I wrote in my Procfile (which tells the Heroku deployment process where to start) was the following:
+```
+web: daphne -b 0.0.0.0 -p $PORT family_shopping_list.asgi:application
+```
+
+I did not need to add any buildpacks for this project.
+
+Once all the above-described steps were completed, I switched to the Deploy tab in the Heroku family-shopping-list-v1 app page, selected Github as the environment I wanted to deploy from (under "Deployment method") and pressed "Connect to Github". I then searched for and selected the family-shopping-list-v1 repository.
+
+I chose the manual "Deploy branch" option and waited until the deployment was complete. When that was done, I clicked on "View" and saw that my Heroku mock terminal had already started my family-shopping-list app. I could then run a smoke test to ensure that everything was working in the deployed environment in a similar way to my last committed version of the App in development.
+
+I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I commit to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my app, 
+
+
 
 <!-- TOC --><a name="bug-fixes-linting-testing-and-ux"></a>
 ## Bug fixes, linting, testing and UX

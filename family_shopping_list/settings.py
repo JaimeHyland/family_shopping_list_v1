@@ -19,21 +19,19 @@ import logging
 if os.path.isfile('env.py'):
     import env
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# SECURITY: this setting ensures that environment settings use the env.py file in development
+# (where the file is present) and the config vars set on the host environment after deployment!
 
 DEBUG = os.environ.get('DEBUG')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-qjiu1pxfz9p.ws.codeinstitute-ide.net', '8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
 
 # Application definition
 

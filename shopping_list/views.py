@@ -1,13 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from django.views import View
+
 from .models import ListItem, Product, Shop, Category
 from .forms import ProductForm, ShopForm, CategoryForm
 from utilities.utils import is_adult
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.db.models import Q
+from django.http import HttpResponseBadRequest
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views import View
 from allauth.account.views import PasswordChangeView
 from django.urls import reverse_lazy
 from django.contrib import messages
