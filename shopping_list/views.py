@@ -33,7 +33,6 @@ def shop(request, shop_name):
 def get(self, request, *args, **kwargs):
         try:
             items = ListItem.objects.filter(bought=False)
-            print(f"Debug: {items}")
             return render(request, 'shopping_list/shopping_list.html', {'items': items})
 
         except Exception as e:
@@ -96,8 +95,6 @@ class ShoppingListView(View):
         try:   
             item_id = request.POST.get('item_id')
             action = request.POST.get('action')
-            print(f"DEBUG: {id}")
-            print(f"DEBUG: {action}")
             if not item_id or not action:
                 print("Bugfix: Invalid request: Missing item_id or action")
                 return HttpResponseBadRequest("Invalid request: Missing item_id or action")

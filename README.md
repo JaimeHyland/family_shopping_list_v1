@@ -204,7 +204,7 @@ The Debug setting was not hard set to No, but was instead handled by an environm
 Aside from the usual error handling in the code; using *try, except, [finally]* structures, for example, perhaps the main protection against unhandled errors is the practice of strictly circumscribing what the user is allowed to do by the App. The vast majority of functions are limited to choices from a closed list or choosing boolean values via checkboxes, etc.. The main defence against any possible malicious use of the App is simply not allowing anyone but close family members (A further reassurance is that none of the family members are currently capable of mounting code injection attacks, or any other potential malicious attack on the App or its underlying database).
 
 
-## Registering for Heroku and using it
+## Deployment to Heroku
 
 <!-- TOC --><a name="initial-registration"></a>
 ### Initial registration
@@ -258,6 +258,15 @@ I chose the manual "Deploy branch" option and waited until the deployment was co
 
 I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I commit to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my app, 
 
+## Running the app in the development environment
+
+The usual ``runserver``-based command (``python manage.py runserver``) runs the app without issues in development.
+
+It's also possible to run the app appealing explicitly to Daphne on the development server:
+```
+daphne family_shopping_list.asgi:application
+```
+However, one issue that should be noted with this method of running the app is that it doesn't check whether all migrations have been applied on startup, while the runserver-based command gives you a warning if you haven't completed your migrations!
 
 
 <!-- TOC --><a name="bug-fixes-linting-testing-and-ux"></a>
@@ -347,10 +356,20 @@ Among many lessons I managed through blood, sweat and tears to learn from were t
 
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
-The major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App so far.
+A strange error appears on the console on first starting the app up as a non-loggedin/non-registered users. The console tells me of a refusal to allow access to the favicon(!) and yet the favicon appears as normal on the browser tab.
+```
+GET https://8000-jaimehyland-familyshopp-qmoq4b3wyki.ws.codeinstitute-ide.net/static/images/favicons/site.webmanifest 401 (Unauthorized)
+site.webmanifest:1 Manifest: Line: 1, column: 1, Syntax error.
+```
+While this issue does not appear to affect either functionality or the UX of users not interested in viewing console messages when browsing the internet, it is more than a little untidy. It may have to do with the way one of my installed Django apps (perhaps Whitenoise?) deals with authorising access. It requires further research.
+
+Aside from this, the major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App so far.
 
 <!-- TOC --><a name="other-design-questions"></a>
 ## Other design questions
+
+### Hard-coded data
+Some of the data used by the app is for reasons of simplicity hard-coded at the development stage. One example of such data is the list of shop types (TYPES_OF_SHOP) used by the program, which is hard-coded into the Models.py file. This list (and any other hard-coded data) will be integrated into an appropriate data table in a future iteration.
 
 <!-- TOC --><a name="help-functions"></a>
 ### Help functions
@@ -358,7 +377,7 @@ I have not, and do not intend to implement any particular systematic Help infras
 
 <!-- TOC --><a name="text-resources-for-i10n-and-l10n"></a>
 ### Text resources for i10n and l10n
-I do not anticipate any need to internationalise an App essentially designed for a single family. If I should decide in the future that such action is needed, I will leverage Django's built-in i18n and l10n capabilities in a later iteration of the App. 
+I do not anticipate any need to internationalise an App essentially designed for a single family. If I should decide in the future that such action is needed, I will leverage Django's built-in i18n and l10n capabilities in a later iteration of the App.
 
 <!-- TOC --><a name="credits-and-sources"></a>
 ## Credits and sources
@@ -382,6 +401,7 @@ Naturally enough, have researched widely to find out how to implement a variety 
 - [geeksforgeeks.org](https://www.geeksforgeeks.org/)
 - [medium.com](https://medium.com/)
 - [django channels](https://channels.readthedocs.io/en/latest/)
+- [Python Software Foundation](https://pypi.org/)
 
 I used some code I found at [https://github.com/derlin/](https://derlin.github.io/bitdowntoc/) to generate this readme file's table of contents.
 

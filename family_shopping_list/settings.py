@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-qjiu1pxfz9p.ws.codeinstitute-ide.net', '8000-jaimehyland-familyshopp-rfehgojzeis.ws.codeinstitute-ide.net','.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-qmoq4b3wyki.ws.codeinstitute-ide.net','.herokuapp.com']
 
 # Application definition
 
@@ -150,9 +150,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# For deployed project only
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Explicit reference to whitenoise recommended for Daphne-based apps.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_MIMETYPES = {'.webmanifest': 'application/manifest+json',}
+
+# This prevents the session expiring every time the browser closes the app.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

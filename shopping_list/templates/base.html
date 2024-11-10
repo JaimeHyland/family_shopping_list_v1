@@ -147,18 +147,22 @@
     
     // Enable add-product button if any checkbox is enabled, disable it otherwise
     function toggleButtonState() {
-      const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
-      addBtn.disabled = !anythingChecked;
-      delBtn.disabled = !anythingChecked;
+      if (addBtn && delBtn) {
+        const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
+        addBtn.disabled = !anythingChecked;
+        delBtn.disabled = !anythingChecked;
+      }
     }
 
-    toggleButtonState();
+    if (chkbxs.length > 0) {
+        toggleButtonState();
   
-    // Listen for changes on any checkbox
-    chkbxs.forEach(checkbox => {
+        // Listen for changes on any checkbox
+        chkbxs.forEach(checkbox => {
         checkbox.addEventListener('change', toggleButtonState);
+        });
+      }
     });
-  });
 </script>
 
 <!--javascript to run toast so that the user knows when a new product has failed to be saved 
@@ -253,6 +257,21 @@ function getCSRFToken() {
     return cookieValue; 
 }
 
+function toggleCancelUncancel(checkbox, itemId) {
+    
+    if (checkbox.checked == true) {
+        if (confirm("Are you sure you don't want this item bought at this time after all?")) {
+            checkbox.checked == true
+            updateDatabase(checkbox, itemId);
+        } else 
+            checkbox.checked == false;
+			updateDatabase(checkbox, itemId);
+    } else {
+         checkbox.checked == false;
+         updateDatabase(checkbox, itemId);
+    }
+}
+
 function updateDatabase(checkbox, itemId) {
     let action;
 
@@ -307,12 +326,17 @@ const socket = new WebSocket(wsUrl);
 
 socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
-    const listItemId = data.list_item_id;
+    const listItemId = String(data.list_item_id);
     const bought = data.bought;
     const cancelled = data.cancelled;
 
     // Find the item in the DOM and update it
-    const listItem = document.querySelector(`[data-item-id='${listItemId}']`);
+    console.log(`Selector used: [data-item-id='${listItemId}']`);
+    const listItem = document.querySelector(`.list-group-item input[value='${listItemId}']`).closest('.list-group-item');
+    if (!listItem) {
+        console.error(`List item with ID ${listItemId} not found`);
+        return;
+    }
     const productText = listItem.querySelector('span');
     const cancelChkbx = listItem.querySelector('.cancel-chkbx');
     const completedChkbx = listItem.querySelector('.completed-chkbx');

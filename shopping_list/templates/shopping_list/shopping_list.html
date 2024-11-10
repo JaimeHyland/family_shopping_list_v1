@@ -24,7 +24,7 @@
             <li class="list-group-item d-flex justify-content-between align items center">
               <div class="d-flex align-items-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
-                  {% if item.cancelled %} checked {% endif %} onchange="confirmCancelUncancel(this, '{{ item.id }}')">
+                  {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
                 <div class="empty-block"></div>
                 <span class="{% if item.cancelled %}text-muted{% endif %}{% if not item.cancelled %}bold-text{% endif %}">
                   <a class="link-success link-opacity-30-hover link-underline-opacity-10"
