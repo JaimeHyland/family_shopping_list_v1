@@ -331,8 +331,9 @@ socket.onmessage = function(event) {
     const cancelled = data.cancelled;
 
     // Find the item in the DOM and update it
-    console.log(`Selector used: [data-item-id='${listItemId}']`);
     const listItem = document.querySelector(`.list-group-item input[value='${listItemId}']`).closest('.list-group-item');
+    
+    // Add a console error just in case the record for some reason no longer exists!
     if (!listItem) {
         console.error(`List item with ID ${listItemId} not found`);
         return;
