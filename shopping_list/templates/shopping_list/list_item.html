@@ -3,13 +3,14 @@
 {% block content %}
 
 <div class="list-item detail">
-    <h1>{{ product.product_name }}</h1>
-    <p><strong>Category:</strong> {{ list_item.product.category.name }}</p>
-    <p><strong>Default Quantity:</strong> {{ product.default_quantity }} {{ product.default_unit }}</p>
-    <p><strong>Default Source:</strong> {{ product.default_source.name }}</p>
-    <p><strong>Creator:</strong> {{ product.creator.username }}</p>
-    <p><strong>Notes:</strong> {{ product.notes }}</p>
-    <p><strong>Current:</strong> {{ product.current|yesno:"Yes,No" }}</p>
+    <h3>{{ list_item.product.product_name|default_if_none:"[No Product Name]" }}</h3>
+    <p><strong>Category:</strong> {{ list_item.product.category.name|default_if_none:"[No Category Name]" }}</p>
+    <p><strong>Default Quantity:</strong> {{ list_item.product.default_quantity|default_if_none:"[No Quantity Given]" }} {{ list_item.product.default_unit|default_if_none:"[No Unit Given]" }}</p>
+    <p><strong>Preferred Shop:</strong> {{ list_item.product.default_source.name|default_if_none:"[No Preferred Shop]" }}</p>
+    <p><strong>Creator:</strong> {{ list_item.product.creator.username|default_if_none:"[No Creator]" }}</p>
+    <p><strong>Product notes:</strong> {{ list_item.product.notes|default_if_none:"[No Product Notes]" }}</p>
+    <p><strong>Creator notes:</strong> {{ list_item.creator_notes|default_if_none:"[No Creator Notes]" }}</p>
+    <p><strong>Shopper notes:</strong> {{ list_item.shopper_notes|default_if_none:"[No Shopper Notes]" }}</p>
 </div>
 
 {% endblock %}

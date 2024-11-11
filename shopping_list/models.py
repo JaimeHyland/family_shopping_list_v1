@@ -159,7 +159,7 @@ class ListItem(models.Model):
         verbose_name = "list item"
 
     def __str__(self):
-        return f"{self.product.product_name} {self.product.category} ({self.product.default_shop})"
+        return f"{self.product.product_name} \u2013 {self.product.category}"
 
     def save(self, *args, **kwargs):
         if not self.preferred_shop and self.product.default_shop:

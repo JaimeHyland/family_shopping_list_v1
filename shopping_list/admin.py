@@ -17,6 +17,25 @@ class ListItemAdmin(admin.ModelAdmin):
     default_shop.short_description = 'Default Shop'
     category.short_description = 'Category'
 
+    # Group ListItems by Product category and allow filtering
+    list_display = ('product', 'category', 'preferred_shop', 'bought', 'cancelled')
+
+    # Enable filtering by category (from Product model)
+    list_filter = ('product__category', 'preferred_shop')
+
+    # Order items by category and product
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('product').order_by('preferred_shop', 'product__category', 'product__product_name')
+
+    # Make the category field sortable in the list
+    def category(self, obj):
+        return obj.product.category
+
+    category.admin_order_field = 'product__category'  # Allow ordering by the category field
+
+    ordering = ('preferred_shop', 'product__category',)
+
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name', 'slug')
