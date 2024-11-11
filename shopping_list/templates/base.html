@@ -267,8 +267,10 @@ function toggleCancelUncancel(checkbox, itemId) {
             checkbox.checked == false;
 			updateDatabase(checkbox, itemId);
     } else {
-         checkbox.checked == false;
-         updateDatabase(checkbox, itemId);
+        if (confirm("Are you sure you want to reinstate this item to the shopping list?")) {
+            checkbox.checked == false;
+            updateDatabase(checkbox, itemId);
+        }
     }
 }
 
