@@ -1,9 +1,10 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 
+
 class ShoppingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        
+
         # All clients join this group
         self.group_name = "shopping_list_updates"
 

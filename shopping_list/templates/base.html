@@ -9,6 +9,8 @@
 <html class="h-100" lang="en">
 
 <head>
+    {% block extra_css %}{% endblock %}
+    
     <title>Hyland shopping list</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -54,25 +56,31 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == home_url %}active{% endif %}" aria-current="page"
-                            href="{% url 'shopping_list' %}">Shopping list</a>
-                    </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == product_list_url %}active{% endif %}"
-                            aria-current="page" href="{% url 'product_list' %}">Products</a>
-                    </li>
-                    {% if user|is_adult_filter %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == category_list_url %}active{% endif %}"
-                            aria-current="page" href="{% url 'category_list' %}">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == shop_list_url %}active{% endif %}"
-                            aria-current="page" href="{% url 'shop_list' %}">Shops</a>
+                        {% url 'shopping_list' as shopping_list_url %}
+                        <a class="nav-link {% if request.path == shopping_list_url %}active{% endif %}" aria-current="page"
+                            href="{{ shopping_list_url }}">Shopping list</a>
                     </li>
                     {% endif %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        {% url 'product_list' as product_list_url %}
+                        <a class="nav-link {% if request.path == product_list_url %}active{% endif %}"
+                            aria-current="page" href="{{ product_list_url }}">Products</a>
+                    </li>
+                    {% endif %}
+                    {% if user|is_adult_filter %}
+                    <li class="nav-item">
+                        {% url 'category_list' as category_list_url %}
+                        <a class="nav-link {% if request.path == category_list_url %}active{% endif %}"
+                            aria-current="page" href="{{ category_list_url }}">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        {% url 'shop_list' as shop_list_url %}
+                        <a class="nav-link {% if request.path == shop_list_url %}active{% endif %}"
+                            aria-current="page" href="{{ shop_list_url }}">Shops</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userAccountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             User Account

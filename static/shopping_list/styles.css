@@ -22,3 +22,11 @@
     text-decoration-color: rgba(119,119,119, 30);
     text-decoration-thickness: 2px;
 }
+
+.nav-link.active {
+    font-weight: bold;
+    color: #007bff;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+

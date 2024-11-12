@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-from cloudinary.models import CloudinaryField
+from django.core.exceptions import ValidationError
 
 
 class Shop(models.Model):
@@ -16,17 +16,20 @@ class Shop(models.Model):
         (6, 'Specialist retailer'),
         (7, 'Flatpack furniture'),
         (8, 'Deli & fine foods'),
-        (9, 'Wines and spirits'),   
+        (9, 'Wines and spirits'),
     )
-    
+
     shop_name = models.CharField(max_length=50, null=False, blank=False)
-    slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name = "user_who_created_shop")
+    slug = models.SlugField(max_length=250, unique=True, null=True, blank=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True,
+        related_name="user_who_created_shop"
+    )
     date_created = models.DateTimeField(auto_now=True)
     notes = models.TextField(null=True, blank=True)
     type_of_shop = models.IntegerField(choices=TYPES_OF_SHOP)
     current = models.BooleanField(default=True)
-
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -42,14 +45,19 @@ class Shop(models.Model):
     def __str__(self):
         return self.shop_name
 
+
 class Category(models.Model):
     category_name = models.CharField(max_length=50, null=False, blank=False)
-    slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name = "user_who_created_category")
+    slug = models.SlugField(max_length=250, unique=True, null=True, blank=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="user_who_created_category"
+        )
     date_created = models.DateTimeField(auto_now=True)
     notes = models.TextField(null=True, blank=True)
     current = models.BooleanField(default=True)
-    
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -63,7 +71,6 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        ordering = ['date_created']
         return self.category_name
 
     class Meta:
@@ -72,12 +79,17 @@ class Category(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=254, null=False, blank=False)
-    slug = models.SlugField(max_length = 250, unique=True, null = True, blank = True)
+    slug = models.SlugField(max_length=250, unique=True, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="product_category")
     default_quantity = models.IntegerField(null=True, blank=True)
     default_unit = models.CharField(max_length=32, null=True, blank=True)
     default_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="default_where_to_buy")
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name = "user_who_created_product")
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="user_who_created_product"
+    )
     date_created = models.DateTimeField(auto_now=True)
     notes = models.TextField(null=True, blank=True)
     current = models.BooleanField(default=True)
@@ -127,7 +139,6 @@ class Product(models.Model):
 
         super().clean()
 
-
     def __str__(self):
         return self.product_name
 
@@ -138,21 +149,43 @@ class Product(models.Model):
 class ListItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_of_list_item")
     date_created = models.DateTimeField(auto_now=True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name = "user_who_created_list_item")
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="user_who_created_list_item"
+    )
     preferred_shop = models.ForeignKey(Shop, on_delete=models.SET_NULL, null=True, blank=True)
     bought = models.BooleanField(default=False)
     date_bought = models.DateTimeField(default=None, blank=True, null=True)
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_who_bought_item", null=True, blank=True)
+    buyer = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_who_bought_item",
+        null=True,
+        blank=True
+    )
     cancelled = models.BooleanField(default=False)
     date_cancelled = models.DateTimeField(default=None, blank=True, null=True)
-    cancelled_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_who_cancelled_item", null=True, blank=True)
+    cancelled_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_who_cancelled_item",
+        null=True,
+        blank=True
+    )
     quantity_required = models.IntegerField(default=1)
     quantity_bought = models.IntegerField(default=0)
-    shop_bought = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="shop_where_item_bought", null=True, blank=True)
+    shop_bought = models.ForeignKey(
+        Shop,
+        on_delete=models.CASCADE,
+        related_name="shop_where_item_bought",
+        null=True,
+        blank=True
+    )
     creator_notes = models.TextField(null=True, blank=True)
     shopper_notes = models.TextField(null=True, blank=True)
     current = models.BooleanField(default=True)
-    
 
     class Meta:
         ordering = ['date_created']

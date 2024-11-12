@@ -64,7 +64,7 @@ We initially decided that the MVP should include the following features:
 - Products should be divided into categories and default sources (e.g. shops) and the shopping list should eventually be filterable using those categories and defaults. (not yet implemented)
 - Both adults and children should be able to cancel items from the shopping list amd to mark items as bought.
 - There should be some mechanism to control which edits should take priority when more than one person at a time is editing the data. I have experimented (so far unsuccessfully) with Django.channels and WebSockets to implement a listening system that notifies users when another user has updated a field in any records they currently have loaded onto their UI. (not yet implemented)
-- There should be no mechanism for outsiders to register to use the app. The superuser should the only person(s) able to add or delete a user from the app. This situation might change in the future, if other families become interested in using the app, but for the moment the MVP works fine with users being added and managed by the superuser by hand.
+- There should be no mechanism for outsiders to register to use the app. The superuser should be the only person(s) able to add or delete a user from the app. This situation might change in the future, if other families become interested in using the app, but for the moment the MVP works fine with users being added and managed manually by the superuser.
 - Anyone not logged in or stumbling on the site accidentally (or maliciously!!) should see a page asking them to log in. If they can't log in, then the simply don't get to see the shopping list.
 
 <!-- TOC --><a name="system-design"></a>
@@ -162,11 +162,11 @@ The first thing a new user sees on navigating to the website is a login page. No
 
 <!-- TOC --><a name="cancelling-list-items"></a>
 ### Cancelling list items
-Each item on the shopping list will have two checkboxes; one on the left and the other on the right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirmation message (not yet implemented). This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again.
+Each item on the shopping list will have two checkboxes; one on the left and the other on the right. The left-hand one will have the effect of cancelling the item from the list after the user clicks a confirmation message. This will be visually marked by displaying the item in a paler colour and disabling the "bought" checkbox. The cancellation can be undone by clicking or tapping the same checkbox again and confirming your reversal again.
 
 The database is updated as soon as the user confirms the change via the confimation message (a modular webpage). Undoing the cancellation will update the database again.
 
-When the user reloads the page, the page's the cancelled item will disappear.
+When the user reloads the page or presses the __Refresh shopping list button__ the page's the cancelled item will disappear.
 
 <!-- TOC --><a name="marking-list-items-as-bought"></a>
 ### Marking list items as bought
@@ -174,7 +174,7 @@ The right-hand checkbox marks the corresponding list item as having been bought.
 
 <!-- TOC --><a name="app-database-updates-for-checkbox-changes"></a>
 ### App database updates for checkbox changes
-Changes to the checkboxes are written directly to the database. I am still considering completing a notification system using Django Channels and WebSockets to ensure that users are informed when someone else has updated data currently on their screen, to minimise the risk of data becoming inconsistent due to parallel usage of the app.  I may, however, decide that a simple routine using extra boolean fields in the relevant models as flags informing users of which user is looking at what data would be enough.
+Changes to the checkboxes are written directly to the database. I intend to complete a notification system using Django Channels and WebSockets to ensure that users are informed when someone else has updated data currently on their screen, to minimise the risk of data becoming inconsistent due to parallel usage of the app.
 
 
 They should also see several buttons:
@@ -356,14 +356,32 @@ Among many lessons I managed through blood, sweat and tears to learn from were t
 
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
-A strange error appears on the console on first starting the app up as a non-loggedin/non-registered users. The console tells me of a refusal to allow access to the favicon(!) and yet the favicon appears as normal on the browser tab.
-```
-GET https://8000-jaimehyland-familyshopp-qmoq4b3wyki.ws.codeinstitute-ide.net/static/images/favicons/site.webmanifest 401 (Unauthorized)
-site.webmanifest:1 Manifest: Line: 1, column: 1, Syntax error.
-```
-While this issue does not appear to affect either functionality or the UX of users not interested in viewing console messages when browsing the internet, it is more than a little untidy. It may have to do with the way one of my installed Django apps (perhaps Whitenoise?) deals with authorising access. It requires further research.
 
-Aside from this, the major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App prints a number of WebSocket errors to the console. However, these errors do not affect the limited functionality that I have implemented in my App so far.
+### Issue with Chrome Developer Tools
+A strange error appears on the console in Chrome when Developer Tools is open. It only occurs on the deployed environment (in Heroku). Chrome appears to cut the App off from the Internet when I do anything on the web page that involves any POST to the database. The relevant errors are as follows:
+```
+POST https://family-shopping-list-v1-bafe564ca613.herokuapp.com/ net::ERR_INTERNET_DISCONNECTED
+```
+
+```
+Form submission error TypeError: Failed to fetch
+    at submitForm ((index):536:5)
+    at updateDatabase ((index):524:5)
+    at toggleCancelUncancel ((index):501:13)
+    at HTMLInputElement.onchange ((index):131:64)
+```
+
+Once the error has occurred, the App instance ceases to work, acting as if the device has no Internet connection. All other tabs on the Chrome instance continue working as normal. Restarting using the Heroku Open App button produces a new instance without problems.
+
+The strangest thing of all about this error is that it only occurs when Chrome's Developer Tools window is open: it doesn't occur when using Chrome with the Developer Tools window closed. Nor does it occur in Edge, with or without its developer tools window open!
+
+It took significant time to realise that the root of the problem lies with the Chrome Develop Tools functionality. One lesson I learnt from this is not to assume immediately the issue is necessarily caused by a problem in my code, settings or configurations.  I will be reporting the issue to Google.
+
+
+###
+Aside from this, the major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App fails to update the shopping list page of other users working on the App in real time when a list item is bought, unbought, cancelled or uncancelled. It was for this functionality that I decided (overambitiously) to use websockets via Daphne and Channels. AS A RESULT OF THIS CONTINUING ISSUE, CLASHES IN DATA STATES MAY OCCUR WHEN TWO INSTANCES OF THE APP ARE USED AT THE SAME TIME. 
+
+I will be working on achieving the goal of realtime multi-user data updating on an ongoing basis.
 
 <!-- TOC --><a name="other-design-questions"></a>
 ## Other design questions

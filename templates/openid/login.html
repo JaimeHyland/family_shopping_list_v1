@@ -1,5 +1,11 @@
 {% extends "openid/base.html" %}
 
+{% load static %}
+
+{% block account_css %}
+    <link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+
 {% load i18n %}
 
 {% block head_title %}OpenID Sign In{% endblock head_title %}
@@ -12,7 +18,7 @@
 <form id="openid_login_form" class="openid_login" method="post" action="{% url 'openid_login' %}">
 {% csrf_token %}
 {{form.as_p}}
-<button type="submit">Sign In</button>
+<button type="submit" class="btn-signinout">Log in</button>
 </form>
 
 {% endblock content %}

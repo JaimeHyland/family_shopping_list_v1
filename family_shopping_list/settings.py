@@ -14,10 +14,9 @@ from pathlib import Path
 import os
 import dj_database_url
 
-import logging
 
 if os.path.isfile('env.py'):
-    import env
+    import env # noqa
 
 # SECURITY: this setting ensures that environment settings use the env.py file in development
 # (where the file is present) and the config vars set on the host environment after deployment!
@@ -31,7 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','8000-jaimehyland-familyshopp-qmoq4b3wyki.ws.codeinstitute-ide.net','.herokuapp.com', 'family-shopping-list-v1-bafe564ca613.herokuapp.com',]
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '8000-jaimehyland-familyshopp-qmoq4b3wyki.ws.codeinstitute-ide.net',
+    '.herokuapp.com',
+    'family-shopping-list-v1-bafe564ca613.herokuapp.com',
+]
 
 # Application definition
 
@@ -156,7 +161,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Explicit reference to whitenoise recommended for Daphne-based apps.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-WHITENOISE_MIMETYPES = {'.webmanifest': 'application/manifest+json',}
+WHITENOISE_MIMETYPES = {'.webmanifest': 'application/manifest', }
 
 # This prevents the session expiring every time the browser closes the app.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
@@ -175,7 +180,7 @@ ASGI_APPLICATION = "family_shopping_list.asgi.application"
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

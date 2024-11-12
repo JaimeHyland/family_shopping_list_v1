@@ -1,18 +1,14 @@
 
 from .models import ListItem, Product, Shop, Category
-from .forms import ProductForm, ShopForm, CategoryForm
+from .forms import ProductForm, ShopForm
 from utilities.utils import is_adult
-
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-from allauth.account.views import PasswordChangeView
-from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 
@@ -31,13 +27,13 @@ def shop(request, shop_name):
 
 @login_required
 def get(self, request, *args, **kwargs):
-        try:
-            items = ListItem.objects.filter(bought=False)
-            return render(request, 'shopping_list/shopping_list.html', {'items': items})
+    try:
+        items = ListItem.objects.filter(bought=False)
+        return render(request, 'shopping_list/shopping_list.html', {'items': items})
 
-        except Exception as e:
-            print(f"Error processing GET request: {e}")
-            return HttpResponseBadRequest("Invalid request")
+    except Exception as e:
+        print(f"Error processing GET request: {e}")
+        return HttpResponseBadRequest("Invalid request")
 
 
 @login_required
@@ -60,9 +56,11 @@ def mark_item(request, item_id, status):
 
     return redirect('shopping_list')
 
+
 class AdultRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return is_adult(self.request.user)
+
 
 @method_decorator(login_required, name='dispatch')
 class ShoppingListView(View):
@@ -71,7 +69,7 @@ class ShoppingListView(View):
         order_chosen = request.GET.get('order_by', 'category')
 
         shopping_list = ListItem.objects.filter(bought=False, cancelled=False, current=True)
-        
+
         if filter_chosen == 'shop':
             shopping_list = shopping_list.order_by('shop_bought__shop_name')
         elif filter_chosen == 'category':
@@ -92,7 +90,7 @@ class ShoppingListView(View):
             })
 
     def post(self, request, *args, **kwargs):
-        try:   
+        try:
             item_id = request.POST.get('item_id')
             action = request.POST.get('action')
             if not item_id or not action:
@@ -101,7 +99,6 @@ class ShoppingListView(View):
 
             item = get_object_or_404(ListItem, id=item_id)
 
-            
             if action == 'cancel':
                 item.cancelled = True
             elif action == 'uncancel':
@@ -213,6 +210,7 @@ class ShopView(View):
 @method_decorator(login_required, name='dispatch')
 class CategoryView(View):
     def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
         category = get_object_or_404(Category, slug=slug)
         return render(request, 'shopping_list/category.html', {'category': category})
 
@@ -226,7 +224,7 @@ class AddToShoppingListView(View):
         for product_id in selected_products:
             product = Product.objects.get(id=product_id)
             ListItem.objects.create(product=product, quantity_required=1, creator=creator)
-        
+
         return redirect('shopping_list')
 
 
@@ -248,6 +246,7 @@ class AddProductView(View):
 
         return redirect('product_list')
 
+
 @method_decorator(login_required, name='dispatch')
 class AddShopView(View):
     def post(self, request, *args, **kwargs):
@@ -262,6 +261,7 @@ class AddShopView(View):
         )
 
         return redirect('shop_list')
+
 
 @method_decorator(login_required, name='dispatch')
 class AddCategoryView(View):

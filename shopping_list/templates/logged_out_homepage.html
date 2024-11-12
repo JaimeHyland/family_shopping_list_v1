@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
@@ -8,7 +14,7 @@
     <p>If you're already a registered Hyland, please <a href="{% url 'account_login' %}">log in</a> to use the App.</p>
     <p>If you're not and you want to become one, please ask the Site Boss personally to create a user and initial password for you.</p>
 
-    <h2>Outside users</h2>
+    <h3>Outside users</h3>
     <p>If you do not know the Site Boss personally, than it's unlikely you'll want to enter this site, unless you're here to examine the
     app for assessment purposes, for example. If that is the case, you'll already have received three different login credentials 
     (one set as a superuser, one as a normal adult user and one as a child), each with an 
@@ -20,10 +26,10 @@
     <p>We may in the future extend this App's functionality for use by other families. A message to this effect will appear on this page
         if and when that happens</p>
     
-    <h2>Outside users</h2>
-    <p>If you're signing in for the first time, the first you should change the password given to you by the Site Boss .
+    <h3>First-time users</h3>
+    <p>If you're signing in for the first time, the first you should change the password given to you by the Site Boss.
         Otherwise, the Site Boss will be in a position to sign in pretending to be you, and possibly mess around with the data in the site
         and blame you.</p>
-    <a href="{% url 'account_login' %}" class="btn btn-primary">Log In</a>
+    <a href="{% url 'account_login' %}" class="btn btn-loginout right">Go to Log-in page</a>
 </div>
 {% endblock %}

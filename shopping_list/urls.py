@@ -2,7 +2,6 @@ from . import views
 from django.urls import path
 
 
-
 urlpatterns = [
     path('', views.ShoppingListView.as_view(), name='shopping_list'),
     path('list-item-<slug:slug>/', views.ListItemView.as_view(), name='list_item'),
