@@ -7,7 +7,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="row">
-        <h3 class="mx-auto">Current shopping list</h3>
+        <h3 class="mx-auto" style="margin-left: 20px;">Current shopping list</h3>
       </div>
       <div class="row">
         <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
@@ -21,21 +21,15 @@
                 <h5>Bought</h5>
             </li>
             {% for item in shopping_list %}
-            <li class="list-group-item d-flex justify-content-between">
-              <div class="d-flex align-items-center justify-content-center">
+            <li class="list-group-item d-flex align-items-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
-                  <div class="text-center flex-grow-1">
-                    <a class="custom-link {% if item.cancelled %}text-muted{% else %}bold-text{% endif %}"
-                       href="{% url 'list_item' slug=item.slug %}">
-                        {{ item.product.product_name }}
-                    </a>
-                </div>
-              </div>
-              <div>
-                <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"
-                  {% if item.bought %} checked {% endif %} onchange="updateDatabase(this, '{{ item.id }}')">
-              </div>
+                <a id="product-name" class="custom-link {% if item.cancelled %}text-muted{% else %}bold-text{% endif %}"
+                  href="{% url 'list_item' slug=item.slug %}" style="margin-left: 20px; flex-grow: 1; text-align: left;">
+                    {{ item.product.product_name }}
+                </a>
+              <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"
+                {% if item.bought %} checked {% endif %} onchange="updateDatabase(this, '{{ item.id }}')">
             </li>
             {% endfor %}
             <button type="submit">Refresh shopping list</button>

@@ -43,9 +43,26 @@ a.custom-link {
     text-decoration: none;
     display: inline-block;
     text-align: center;
-
 }
 
 a.custom-link:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    #product-name {
+        margin-left: 20px !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    #product-name {
+        margin-left: 80px !important;
+    }
+}
+
+@media (min-width: 769px) {
+    #product-name {
+        margin-left: 140px !important;
+    }
 }
