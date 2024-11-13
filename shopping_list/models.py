@@ -185,6 +185,7 @@ class ListItem(models.Model):
     )
     creator_notes = models.TextField(null=True, blank=True)
     shopper_notes = models.TextField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, unique=True) 
     current = models.BooleanField(default=True)
 
     class Meta:
@@ -198,3 +199,6 @@ class ListItem(models.Model):
         if not self.preferred_shop and self.product.default_shop:
             self.preferred_shop = self.product.default_shop
         super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = slugify(f"{self.product.slug}-{self.id}")
+            super().save(update_fields=['slug'])

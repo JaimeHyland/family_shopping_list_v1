@@ -30,3 +30,22 @@
     border-radius: 4px;
 }
 
+a.link-success {
+    text-decoration: none;
+}
+
+a.link-success:hover {
+    text-decoration: underline;
+}
+
+a.custom-link {
+    color: #004225;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+
+}
+
+a.custom-link:hover {
+    text-decoration: underline;
+}

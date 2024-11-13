@@ -4,13 +4,13 @@
 
 <div class="list-item detail">
     <h3>{{ list_item.product.product_name|default_if_none:"[No Product Name]" }}</h3>
-    <p><strong>Category:</strong> {{ list_item.product.category.name|default_if_none:"[No Category Name]" }}</p>
-    <p><strong>Default Quantity:</strong> {{ list_item.product.default_quantity|default_if_none:"[No Quantity Given]" }} {{ list_item.product.default_unit|default_if_none:"[No Unit Given]" }}</p>
-    <p><strong>Preferred Shop:</strong> {{ list_item.product.default_source.name|default_if_none:"[No Preferred Shop]" }}</p>
+    <p><strong>Category:</strong> {{ list_item.product.category.category_name|default_if_none:"[No Category Name]" }}</p>
+    <p><strong>Default quantity:</strong> {{ list_item.product.default_quantity|default_if_none:"[No Quantity Given]" }} X {{ list_item.product.default_unit|default_if_none:"[No Unit Given]" }}</p>
+    <p><strong>Preferred shop:</strong> {{ list_item.product.default_shop|default:"None" }}</p>
     <p><strong>Creator:</strong> {{ list_item.product.creator.username|default_if_none:"[No Creator]" }}</p>
-    <p><strong>Product notes:</strong> {{ list_item.product.notes|default_if_none:"[No Product Notes]" }}</p>
-    <p><strong>Creator notes:</strong> {{ list_item.creator_notes|default_if_none:"[No Creator Notes]" }}</p>
-    <p><strong>Shopper notes:</strong> {{ list_item.shopper_notes|default_if_none:"[No Shopper Notes]" }}</p>
+    <p><strong>Product notes:</strong> {{ list_item.product.notes|default:"[[No notes by product creator]" }}</p>
+    <p><strong>Creator notes:</strong> {{ list_item.creator_notes|default:"[[No notes by person ordering]" }}</p>
+    <p><strong>Shopper notes:</strong> {{ list_item.shopper_notes|default:"[No notes by shopper]" }}</p>
 </div>
 
 {% endblock %}

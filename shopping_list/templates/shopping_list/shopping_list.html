@@ -7,7 +7,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="row">
-        <h1 class="mx-auto">Current shopping list</h1>
+        <h3 class="mx-auto">Current shopping list</h3>
       </div>
       <div class="row">
         <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
@@ -17,19 +17,20 @@
           <input type="hidden" id="action-type" name="action" value="">
           <ul id="shopping_list" class="list-group list-group-flush mx-lg-3">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <h4>Cancelled</h4>
-                <h4>Bought</h4>
+              <h5>Cancelled</h5>
+                <h5>Bought</h5>
             </li>
             {% for item in shopping_list %}
-            <li class="list-group-item d-flex justify-content-between align items center">
-              <div class="d-flex align-items-center">
+            <li class="list-group-item d-flex justify-content-between">
+              <div class="d-flex align-items-center justify-content-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
-                <div class="empty-block"></div>
-                <span class="{% if item.cancelled %}text-muted{% endif %}{% if not item.cancelled %}bold-text{% endif %}">
-                  <a class="link-success link-opacity-30-hover link-underline-opacity-10"
-                    href="{% url 'list_item' slug=item.product.slug %}">{{ item.product.product_name }}</a>
-                </span>
+                  <div class="text-center flex-grow-1">
+                    <a class="custom-link {% if item.cancelled %}text-muted{% else %}bold-text{% endif %}"
+                       href="{% url 'list_item' slug=item.slug %}">
+                        {{ item.product.product_name }}
+                    </a>
+                </div>
               </div>
               <div>
                 <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"

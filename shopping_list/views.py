@@ -122,8 +122,8 @@ class ShoppingListView(View):
 class ListItemView(View):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
-        listItem = get_object_or_404(ListItem, product__slug=slug, current=True, bought=False)
-        return render(request, 'shopping_list/list_item.html', {'list_item': listItem})
+        list_item = get_object_or_404(ListItem, slug=slug, current=True, bought=False)
+        return render(request, 'shopping_list/list_item.html', {'list_item': list_item})
 
 
 @method_decorator(login_required, name='dispatch')
