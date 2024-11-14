@@ -80,10 +80,14 @@ class Category(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=254, null=False, blank=False)
     slug = models.SlugField(max_length=250, unique=True, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="product_category")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="product_category"
+    )
     default_quantity = models.IntegerField(null=True, blank=True)
     default_unit = models.CharField(max_length=32, null=True, blank=True)
-    default_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="default_where_to_buy")
+    default_shop = models.ForeignKey(
+        Shop, on_delete=models.CASCADE, related_name="default_where_to_buy"
+    )
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -123,19 +127,23 @@ class Product(models.Model):
         lc_name = self.product_name.lower()
 
         if self.pk:
-            # Existing product: Check for duplicates case-insensitively except itself
+            # Existing product: Check for duplicates case-insensitively
             if Product.objects.exclude(pk=self.pk).filter(
                 product_name__iexact=lc_name,
                 current=True
             ).exists():
-                raise ValidationError('A product with this name already exists.')
+                raise ValidationError(
+                    'A product with this name already exists.'
+                )
         else:
             # New product: Check for duplicates case-insensitively
             if Product.objects.filter(
                 product_name__iexact=lc_name,
                 current=True
             ).exists():
-                raise ValidationError('A product with this name already exists.')
+                raise ValidationError(
+                    'A product with this name already exists.'
+                )
 
         super().clean()
 
@@ -147,7 +155,9 @@ class Product(models.Model):
 
 
 class ListItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_of_list_item")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_of_list_item"
+    )
     date_created = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -155,7 +165,9 @@ class ListItem(models.Model):
         null=True,
         related_name="user_who_created_list_item"
     )
-    preferred_shop = models.ForeignKey(Shop, on_delete=models.SET_NULL, null=True, blank=True)
+    preferred_shop = models.ForeignKey(
+        Shop, on_delete=models.SET_NULL, null=True, blank=True
+    )
     bought = models.BooleanField(default=False)
     date_bought = models.DateTimeField(default=None, blank=True, null=True)
     buyer = models.ForeignKey(
@@ -185,7 +197,7 @@ class ListItem(models.Model):
     )
     creator_notes = models.TextField(null=True, blank=True)
     shopper_notes = models.TextField(null=True, blank=True)
-    slug = models.SlugField(null=True, blank=True, unique=True) 
+    slug = models.SlugField(null=True, blank=True, unique=True)
     current = models.BooleanField(default=True)
 
     class Meta:

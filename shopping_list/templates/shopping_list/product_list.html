@@ -12,22 +12,22 @@
         {% if user|is_adult_filter %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add a new product</button>
         {% else %}
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal" disabled>Ask your parents to add a new product</button>
+        <button type="button" class="btn btn-close-white" data-bs-toggle="modal" data-bs-target="#addProductModal" disabled>Ask your parents to add a new product</button>
         {% endif %}
-        <h1 class="mx-auto">Products</h1>
+        <h3 class="mx-3">Products</h1>
       </div>
       <div class="row">
         <form id="product-list-form" method="POST" action="{% url 'add_to_shopping_list' %}" class="w-100">
           {% csrf_token %}
           {% for category, product_list in grouped_products.items %}
             <!-- Category heading -->
-            <h3 class="mt-4">{{ category }}</h3>
+            <h4 class="mx-3">{{ category }}</h4>
             <ul class="list-group list-group-flush mx-lg-3">
               {% for product in product_list %}
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                   <span>
-                    <a class="link-success link-opacity-30-hover link-underline-opacity-10"
+                    <a class="link-success link-opacity-30-hover link-underline-opacity-10 mx-3" 
                       href="{% url 'product_detail' slug=product.slug %}">{{ product.product_name }}</a>
                   </span>
                 </div>

@@ -3,14 +3,14 @@
 {% block content %}
 
 <div class="list-item detail">
-    <h3>{{ list_item.product.product_name|default_if_none:"[No Product Name]" }}</h3>
-    <p><strong>Category:</strong> {{ list_item.product.category.category_name|default_if_none:"[No Category Name]" }}</p>
-    <p><strong>Default quantity:</strong> {{ list_item.product.default_quantity|default_if_none:"[No Quantity Given]" }} X {{ list_item.product.default_unit|default_if_none:"[No Unit Given]" }}</p>
-    <p><strong>Preferred shop:</strong> {{ list_item.product.default_shop|default:"None" }}</p>
-    <p><strong>Creator:</strong> {{ list_item.product.creator.username|default_if_none:"[No Creator]" }}</p>
-    <p><strong>Product notes:</strong> {{ list_item.product.notes|default:"[[No notes by product creator]" }}</p>
-    <p><strong>Creator notes:</strong> {{ list_item.creator_notes|default:"[[No notes by person ordering]" }}</p>
-    <p><strong>Shopper notes:</strong> {{ list_item.shopper_notes|default:"[No notes by shopper]" }}</p>
+    <h3 class="mx-3">{{ list_item.product.product_name|default_if_none:"[No Product Name]" }}</h3>
+    <p class="mx-3"><strong>Category:</strong> {{ list_item.product.category.category_name|default_if_none:"[No Category Name]" }}</p>
+    <p class="mx-3"><strong>Default quantity:</strong> {{ list_item.product.default_quantity|default_if_none:"[No Quantity Given]" }} X {{ list_item.product.default_unit|default_if_none:"[No Unit Given]" }}</p>
+    <p class="mx-3"><strong>Preferred shop:</strong> {{ list_item.product.default_shop|default:"None" }}</p>
+    <p class="mx-3"><strong>Creator:</strong> {{ list_item.product.creator.username|default_if_none:"[No Creator]" }}</p>
+    <p class="mx-3"><strong>Product notes:</strong> {{ list_item.product.notes|default:"[[No notes by product creator]" }}</p>
+    <p class="mx-3"><strong>Creator notes:</strong> {{ list_item.creator_notes|default:"[[No notes by person ordering]" }}</p>
+    <p class="mx-3"><strong>Shopper notes:</strong> {{ list_item.shopper_notes|default:"[No notes by shopper]" }}</p>
 </div>
 
 {% endblock %}

@@ -7,7 +7,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="row">
-        <h3 class="mx-auto" style="margin-left: 20px;">Current shopping list</h3>
+        <h3 class="mx-3">Current shopping list</h3>
       </div>
       <div class="row">
         <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
@@ -24,12 +24,14 @@
             <li class="list-group-item d-flex align-items-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
-                <a id="product-name" class="custom-link {% if item.cancelled %}text-muted{% else %}bold-text{% endif %}"
-                  href="{% url 'list_item' slug=item.slug %}" style="margin-left: 20px; flex-grow: 1; text-align: left;">
-                    {{ item.product.product_name }}
-                </a>
-              <input type="checkbox" class="completed-chkbx" name="completed_items" value="{{ item.id }}"
-                {% if item.bought %} checked {% endif %} onchange="updateDatabase(this, '{{ item.id }}')">
+                  <span class="{% if item.cancelled %}text-muted{% else %}bold-text{% endif %}">
+                    <a id="product-name" class="custom-link"
+                      href="{% url 'list_item' slug=item.slug %}" style="margin-left: 35px; flex-grow: 1; text-align: left;">
+                        {{ item.product.product_name }}
+                    </a>
+                  </span>
+                <input type="checkbox" class="completed-chkbx ms-auto" name="completed_items" value="{{ item.id }}"
+                  {% if item.bought %} checked {% endif %} onchange="updateDatabase(this, '{{ item.id }}')">
             </li>
             {% endfor %}
             <button type="submit">Refresh shopping list</button>

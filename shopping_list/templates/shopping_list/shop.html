@@ -7,15 +7,15 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="shop_name">Shop:</label>
-             {{ form.shop_name }}
+            <p class="mx-3">{{ form.shop_name }}</p>
         </div>
         <div class="form-group"></div>
         <label for="type_of_shop">Type of shop:</label>
-            {{ form.type_of_shop }}
+        <p class="mx-3">{{ form.type_of_shop }}</p>
         </div>
         <div class="form-group">
             <label for="notes">Notes:</label>
-            {{ form.notes }}
+            <p class="mx-3">{{ form.notes }}</p>
         </div> 
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>

@@ -2,16 +2,16 @@
 
 {% block content %}
 
-<div class="category detail"></div>
+<div class="category detail">
     <form method="POST" action="" class="w-100">
         {% csrf_token %}
         <div class="form-group">
             <label for="category_name">Category:</label>
-            {{ Category.category_name }}
+            <p class="mx-3">{{ Category.category_name }}</p>
         </div>
         <div class="form-group">
             <label for="notes">Notes:</label>
-            {{ Category.notes }}
+            <p class="mx-3">{{ Category.notes }}</p>
         </div>
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>

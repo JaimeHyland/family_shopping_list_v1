@@ -49,6 +49,12 @@ a.custom-link:hover {
     text-decoration: underline;
 }
 
+a.custom-link.text-muted {
+    font-weight: normal !important;
+    color: #6c757d !important;
+    text-decoration: none !important;
+}
+
 @media (max-width: 576px) {
     #product-name {
         margin-left: 20px !important;

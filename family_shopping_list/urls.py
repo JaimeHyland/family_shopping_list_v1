@@ -26,11 +26,22 @@ urlpatterns = [
     path('welcome_page/', views.welcome_page, name='logged_out_homepage'),
     path('', include('shopping_list.urls')),
     path("accounts/", include("allauth.urls")),
-    path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='account_change_password'),
-    path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+    path(
+        'accounts/password_change/',
+        auth_views.PasswordChangeView.as_view(),
+        name='account_change_password'
+    ),
+    path(
+        'accounts/password_change/done/',
+        auth_views.PasswordChangeDoneView.as_view(),
+        name='password_change_done'
+    ),
     path('admin/', admin.site.urls),
     path('summernote/', include('django_summernote.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, doument_root=settings.STATIC_ROOT)
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT
+    )

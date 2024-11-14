@@ -7,7 +7,11 @@ from django_summernote.widgets import SummernoteWidget
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['product_name', 'category', 'default_quantity', 'default_unit', 'default_shop', 'notes']
+        fields = [
+            'product_name', 'category', 'default_quantity',
+            'default_unit', 'default_shop', 'notes'
+        ]
+
         widgets = {
             'notes': SummernoteWidget(),
         }
@@ -22,14 +26,18 @@ class ProductForm(forms.ModelForm):
                     product_name__iexact=normalized_name,
                     current=True
                 ).exists():
-                    raise ValidationError("A product with this name already exists and is marked as current.")
+                    raise ValidationError(
+                        "A product with this name already exists and is marked as current."  # noqa
+                    )
             else:
                 # New product: Check case-insensitively
                 if Product.objects.filter(
                     product_name__iexact=normalized_name,
                     current=True
                 ).exists():
-                    raise ValidationError("A product with this name already exists and is marked as current.")
+                    raise ValidationError(
+                        "A product with this name already exists and is marked as current."  # noqa
+                    )
         return product_name
 
 

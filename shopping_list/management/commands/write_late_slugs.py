@@ -12,4 +12,6 @@ class Command(BaseCommand):
             shop.slug = slugify(shop.shop_name)
             shop.save()
 
-        self.stdout.write(self.style.SUCCESS(f"Updated slugs for {unslugged_shops.count()} shops."))
+        self.stdout.write(self.style.SUCCESS(
+            f"Updated slugs for {unslugged_shops.count()} shops."
+        ))

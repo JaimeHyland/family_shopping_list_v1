@@ -1,10 +1,10 @@
 
 ![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
-# Family Shopper WIP
+# Family Shopper
 A bespoke shopping list management app developed using django and a variety of other technologies especially for the Hyland family.
 
-Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the business logic used to control a centrally-owned dataset (in this case, the data used by the Hyland family to organise their household grocery shopping). Set up an authentication mechanism (for one superuser, an "adult" and a "child" role) and provide appropriate access to the site's data, allowing each role to do activities appropriate to that role, based on the dataset.
+Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the business logic used to control a centrally-owned dataset (in this case, the data used by the Hyland family to organise their household grocery shopping). Set up an authentication mechanism (for a superuser, an "adult" and a "child" role) and provide appropriate access to the site's data, allowing each role to undertake activities appropriate to that role, based on the dataset.
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
@@ -233,7 +233,12 @@ As this was not the first time I have used Heroku using the Student offer organi
 - SECRET_KEY: this key is required in order to protect a number of security-critical Django processes, including, but not limited to the generation of CSRF tokens
 - DISABLE_COLLECTSTATIC: initially set to 1, later changed to 0
 
-All of these configuration variables have an equivalent in the env.py file in my development environment. All values in the env file are identical to those shown above, with the exception of the DEBUG variable, which is set to 'True' in env.py, so that I can see a detailed description of errors in my code while working. The file is excluded from Git version management, and therefore does not get written to the deployed environment, as it is designed for use only in development.  A simply piece of code in the settings.py file ensures that the deployed app searches Heroko's Config Vars rather than looking for the absent env.py file:
+Three of these configuration variables have an equivalent in the env.py file in my development environment: 
+- DATABASE_URL
+- DEBUG 
+- SECRET_KEY
+
+The values of DATABASE_URL and SECRET_KEY in the env.py file are identical to their equivalents in the Heroku config vars. However, the DEBUG variable is set to 'True' in env.py so that I as the developer can see a detailed description of errors in my code while working. For reasons of security, the file is excluded from Git version management, and therefore does not get written to the deployed environment, as it is designed for use only in development. A simply piece of code in the settings.py file ensures that the deployed app searches Heroko's Config Vars rather than looking for the absent env.py file:
 ```
 if os.path.isfile('env.py'):
     import env
@@ -241,7 +246,15 @@ if os.path.isfile('env.py'):
 DEBUG = os.environ.get('DEBUG')
 ```
 
-This approach prevents me from having to remember to manually change True to False in my code every time I commit and deploy a new version of my app to Heroku.
+This approach prevents me from having to remember to manually change True to False in my code every time I commit and deploy a new version of my app to Heroku, and thus obviates the danger of hackers using detailed error messages to analyse my code for nefarious purposes.
+
+However, to be absolutely certain that I'm conforming to the standards expected of us programmers, I have removed these two code snippets and replaced them with this line:
+
+```
+DEBUG = False
+```
+
+### Setting up Heroku for Daphne
 
 Instead of using gunicorn in the command to use the webserver, I have opted to use Django's Daphne toolset, which allows my program to run asynchronously using channel layers via the Channels add-on, also available within the Django toolset. Both packages are added to the list of INSTALLED_APPS in the settings file, and are naturally also listed in the requirements.txt file with the appropriate version numbers to ensure that they're installed correctly by Heroku in the deployed environment.
 
@@ -258,23 +271,33 @@ I chose the manual "Deploy branch" option and waited until the deployment was co
 
 I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I commit to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my app, 
 
+
 ## Running the app in the development environment
 
-The usual ``runserver``-based command (``python manage.py runserver``) runs the app without issues in development.
+Using the more usual ``runserver``-based command (``python manage.py runserver``) that we were taught can lead to issues in the development version of the app.
 
-It's also possible to run the app appealing explicitly to Daphne on the development server:
+It makes more sense to run the app appealing explicitly to Daphne on the development server:
 ```
 daphne family_shopping_list.asgi:application
 ```
-However, one issue that should be noted with this method of running the app is that it doesn't check whether all migrations have been applied on startup, while the runserver-based command gives you a warning if you haven't completed your migrations!
+
+However, one issue that should be noted with this method of running the app is that it doesn't seem to check whether all migrations have been applied on startup, while the runserver-based command would give you a warning if you hadn't completed your migrations! For this reason, when using Daphne, it's particularly important to remember to migrate any changes in your models (or in Django's standard models) before deploying!
 
 
 <!-- TOC --><a name="bug-fixes-linting-testing-and-ux"></a>
 ## Bug fixes, linting, testing and UX
 
 <!-- TOC --><a name="linting"></a>
-### Linting
-Due to pressure of time (as a result of what was in hindsight an overambitious attempt to implement a notification system for multiple users through the use of Django.channels and WebSockets), I was unable to implement a linting solution for my html, css, javascript or python code. I intend in the next iteration to implement a system similar to the one explained in the Code Institute's walkthrough projects that form part of my learning materials.
+### Linting the python
+All python code (aside from standard and/or boiler-plate code provided by Django and similar) has been and corrected using flake8. For development purposes, I altered flake8's ini settings (in the ``.flake8`` file in the project's root directory) to allow lines of up to 119 characters during development. For the purposes of this project, however, I temporarily set the maximum line length to 79, as required by the guidelines, and as advised by my mentor.
+
+I saw fit to comment out several issues using the ``# noqa`` notation, mostly to do with lines slightly longer than 79 characters whose readability would have clearly disimproved rather than improved by the addition of a line break (these cases were mostly in the models.py and urls.py files), but also once for an unused import at the top of my stub tests.py file, which was not used in this iteration of the App's development cycle.
+
+While I strongly believe that the limit of 79 characters per line is excessively restrictive for python code readability in these days of larger, higher-resolution screens that often make much longer lines perfectly readable, I would be happy to reduce the standard number of characters per line to 79 if a client requires, especially if payment for my coding were being calculated according to the number of lines coded!
+
+### Linting the HTML, CSS and JavaScript
+
+
 
 <!-- TOC --><a name="bugs-and-debugging"></a>
 ### Bugs and debugging
@@ -282,15 +305,15 @@ Bugs were fixed as they arose function-by-function during development as they ar
 
 <!-- TOC --><a name="database-debugging"></a>
 #### Database debugging
-While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties making such changes during this project. The model update history can be seen in the github site within the ./shopping_list/migrations directory.
+While developing this app, I intermittently had to make updates to the database models and migrate them to the database. I didn't encounter any serious difficulties in making such changes during this project, though I did once have to make some slightly more intricate adjustments to the already existing data in the ListItem model when adding a unique slug record for each ListItem record. The model update history can be seen in the github site within the ./shopping_list/migrations directory. The issue involving the unique slug on the ListItem model can be traced there in migrations #016, #019 and #020.
 
 <!-- TOC --><a name="debugging-app-logic"></a>
 #### Debugging App logic
-There remain a long list of issues with the App that I have not had the time to deal with. Some of these issues relate to the App's integration with cached data, and some are simply holes relating to duplicates, etc.. I have tried to reflect as many of them as possible in the Use Cases for resolution in future iterations of the App.
+There remains a  list of issues with the App that I have not had the time to deal with. Some of these issues relate to the App's integration with cached data, and a few may be simply holes relating to duplicates, etc., though I have spent considerable time and effort removing the most obvious of these. I have tried to reflect as many of the remaining issues as possible in the Use Cases for resolution in future iterations of the App.
 
 <!-- TOC --><a name="features-testing"></a>
 ### Features testing
-Of course I did ongoing testing of the limited features I have implemented in both the development and deployment environment as I went through each ticket on my Kanban board (which can be found at https://github.com/users/JaimeHyland/projects/3/views/1). The App is not yet mature enough for it to make sense to subject it to a systematic final round of features testing.
+Of course I did ongoing testing of the still fairly limited features I have implemented in both the development and deployment environment as I went through each ticket on my Kanban board (which can be found at https://github.com/users/JaimeHyland/projects/6/views/1). The App is  mature enough quite yet for it to make sense to subject it to a systematic final round of features testing.
 
 <!-- TOC --><a name="browser-and-device-compatibility"></a>
 ### Browser and device compatibility
@@ -306,53 +329,53 @@ Owing to lack of time and resources, I was unable to do any testing on any legac
 
 <!-- TOC --><a name="ux"></a>
 ### UX
-The App is not yet mature enough for it to require user experience feedback from its four potential users (one of which being yours truly). It'll no doubt receive lots of informal UX feedback (whether I like it or not!) once it achieves Beta status.
+The App is now close to being mature enough for it to profit from user experience feedback from its four potential users (one of which being yours truly). It'll no doubt receive lots of informal UX feedback (whether I like it or not!) over the coming weeks and months.
 
-While the detailed information available on each product and shopping list item suits the UX needs of the Hyland family, as the Superuser is highly motivated to maintain the system assiduously, if the App should ever be converted into App generally usable by other individuals and families, the presence of such an assiduous superuser can't be guaranteed. As a result it may be necessary to "re-inject more simplicity" into the App logic, perhaps giving people the choice of using it as a simple smartphone-based shared list, containing nothing more than a list of the items that need buying, with no background details.
+While the detailed information available on each product and shopping list item suits the UX needs of the Hyland family, as the Superuser is highly motivated to maintain the system assiduously, if the App should ever be converted into App generally usable by other individuals and families, the presence of such an assiduous superuser can't be guaranteed. As a result it may be necessary to "re-inject more simplicity" into the App logic, perhaps giving people the choice of using it as a simple smartphone-based shared list, perhaps containing nothing more than a list of the items that need buying, with few background details other than one- or two-word product entries.
 
 Injecting such simplicity as an option would require a good deal of thought, consultation, coding and testing.
 
 There are also a number of issue in terms of UX that still need to be dealt with: for example, the workflow for changing password leaves the user in a cul de sac without obvious way of getting back to the home page without either browsing backwards using the browser back arrow or directly editing the change_password_done template's url. The change_password_done template clearly needs some customisation. This constitutes yet another opportunity for refactoring in the future.
 
-Another issue with the UX is that users who like to use their browser's back and forward arrows will note that pages often do not change for two, three or sometimes even more clicks or taps, as product, shop and category pages have functions cause the page to reload, counting as a different instance of the page. This isn't a very serious issue, but it might be worth keeping in mind for repair in the future.
+Another issue with the UX is that users who like to use their browser's back and forward arrows will note that pages often do not change for two, three or sometimes even more clicks or taps, as product, shop and category pages all have functions that cause the page to reload, with each reload counting as a different instance of the page. This isn't a critical issue, but it might be worth keeping in mind for repair in the future.
 
-The very central role of the app &ndash;its facility to add products to the list and mark them off as they are bought&ndash; still has one deceptively complex issue: it allows more than one instance of each object to be added to the list. The user should interpret this as meaning that more than one of that product should be bought, but it would be far clearer to users if there was only one item on the list with an instruction to buy two of them. This is something that sadly has to be left to another iteration of development.
+The very central role of the app &ndash;its facility to add products to the list and mark them off as they are bought&ndash; still has one deceptively complex issue: it allows more than one instance of each object to be added to the list. The user should interpret this as meaning that more than one of that product should be bought, but it would be far clearer to users if there was only one item on the list with an instruction to buy two of them. This is something that sadly yet again has to be left to another iteration of development.
 
-For the moment I'm going to assume that the facility for the shopper so be able to simply tick stuff off the list as it is bought is more important than an ability to count units.
+For the moment I'm going to assume that the facility for the shopper so be able to simply tick stuff off the list as it is bought is more important than an ability to count precisely how many units are needed. If I'm wrong, no doubt user feedback at the beta stage will put me back on the right track.
 
 <!-- TOC --><a name="final-testing-and-validation-before-submission"></a>
 ### Final testing and validation before submission
 
 This iteration
-- All all console.log and print statements designed to facilitate the ongoing debugging process were carefully removed from the site's root directory and all child directories.
+- All all console.log and print statements designed to facilitate the ongoing debugging process were carefully removed from the site's root directory and all child directories (I have a strict policy of marking all such statements with the word 'DEBUG' in block capitals to make it easier to search and destroy at the end of each iteration).
 - All internal links (from menus, buttons and the various list items) have been smoke-checked systematically.
 
 See the text above for details of features and links that have not been fully implemented, especially features whose foundations can be seen in the current code.
 
 The following will be done before submission of a later iteration of this project:
 - The two steps taken in the present iteration will be repeated.
-- Any external links that may be added will be tested.
+- Any external links that may be added will be tested (none were added in this iteration).
 - A systematic test on each of the machines and at each of the effective resolutions listed above (in portrait and landscape mode where appropriate) for:
     - Obvious visual issues in relation to accessibility, responsiveness and functionality.
     - The correct functioning of the above-listed functions.
     - The relevant _Code Institute_ assessment criteria for pass, merit and distinction (where not already covered in tests already completed).
 - A final smoke-test after deployment running the above tests on each of the above-described devices and resolutions.
-- All html pages and bespoke css code will be validate (see below).
+
 
 <!-- TOC --><a name="lessons-learnt"></a>
 ## Lessons learnt
 
 <!-- TOC --><a name="time-management"></a>
 ### Time management
-When faced with the inevitable coding challenges of an inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for human help. In addition, some of my decisions on pages and features to be included were over-ambitious.
+When faced with the inevitable coding challenges of a fairly inexperienced coder, I could sometimes have managed my time a little better. I often spent too long on bugs without looking for human help. In addition, some of my decisions on pages and features to be included were over-ambitious.
 
 <!-- TOC --><a name="technical-tools-and-technical-issues-resolved"></a>
 ### Technical tools and technical issues resolved 
-
 Among many lessons I managed through blood, sweat and tears to learn from were the following:
 - The use of the django shell (*'python3 manage.py shell'*) to run queries without altering the core code. 
 - The use of pre-saved queries in a management/command/[command_file_name].py file (along with various issues attached to using it, which took me quite some time to sort out!)
 - the use of websockets via django's channels and daphne packages was one of the biggest challenges I faced in developing this app. I depended heavily on a [tutorial](https://channels.readthedocs.io/en/stable/tutorial/index.html) on how to make a simple messaging app using the two packages that I found in the django documentation. While I learnt a lot in working here, I have not yet managed to achieve what I wished with these asynchronous technologies in the current App. See next section.
+
 
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
@@ -371,31 +394,31 @@ Form submission error TypeError: Failed to fetch
     at HTMLInputElement.onchange ((index):131:64)
 ```
 
-Once the error has occurred, the App instance ceases to work, acting as if the device has no Internet connection. All other tabs on the Chrome instance continue working as normal. Restarting using the Heroku Open App button produces a new instance without problems.
+Once the error has occurred, the App instance ceases to work, acting as if the device has no Internet connection. All other tabs on the affected Chrome instance continue working as normal. Restarting using the Heroku Open App button produces a new instance without problems.
 
 The strangest thing of all about this error is that it only occurs when Chrome's Developer Tools window is open: it doesn't occur when using Chrome with the Developer Tools window closed. Nor does it occur in Edge, with or without its developer tools window open!
 
 It took significant time to realise that the root of the problem lies with the Chrome Develop Tools functionality. One lesson I learnt from this is not to assume immediately the issue is necessarily caused by a problem in my code, settings or configurations.  I will be reporting the issue to Google.
 
-
-###
+### The elephant in the room
 Aside from this, the major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App fails to update the shopping list page of other users working on the App in real time when a list item is bought, unbought, cancelled or uncancelled. It was for this functionality that I decided (overambitiously) to use websockets via Daphne and Channels. AS A RESULT OF THIS CONTINUING ISSUE, CLASHES IN DATA STATES MAY OCCUR WHEN TWO INSTANCES OF THE APP ARE USED AT THE SAME TIME. 
 
 I will be working on achieving the goal of realtime multi-user data updating on an ongoing basis.
+
 
 <!-- TOC --><a name="other-design-questions"></a>
 ## Other design questions
 
 ### Hard-coded data
-Some of the data used by the app is for reasons of simplicity hard-coded at the development stage. One example of such data is the list of shop types (TYPES_OF_SHOP) used by the program, which is hard-coded into the Models.py file. This list (and any other hard-coded data) will be integrated into an appropriate data table in a future iteration.
+Some of the data used by the app is for reasons of simplicity hard-coded at the development stage. One example of such data is the list of shop types (TYPES_OF_SHOP) used by the program, which is hard-coded into the Models.py file. This list (and any other hard-coded data) may be integrated into an appropriate data table in a future iteration, depending on early user feedback.
 
 <!-- TOC --><a name="help-functions"></a>
 ### Help functions
-I have not, and do not intend to implement any particular systematic Help infrastructure behind the App in addition to Django's generic help functionality.  I will concentrate on ensuring that all UIs in the App are as intuitive and simple as humanly possible. In any rare cases where it seems that some explanation may be necessary, I may provide the user with information via discreet modal displays.
+I have not, and do not intend in any scheduled future to implement any particular systematic Help infrastructure behind the App in addition to Django's generic help functionality.  I will concentrate on ensuring that the UX is as seamless as possible and that all UIs in the App are as intuitive and simple as humanly possible. In any rare cases where it seems that some explanation may be necessary, I may provide the user with information via discreet modal displays. Apart from immediate aesthetic considerations, I'll have to give further thought to the positioning of buttons, the greater use of modal windows, etc..
 
 <!-- TOC --><a name="text-resources-for-i10n-and-l10n"></a>
 ### Text resources for i10n and l10n
-I do not anticipate any need to internationalise an App essentially designed for a single family. If I should decide in the future that such action is needed, I will leverage Django's built-in i18n and l10n capabilities in a later iteration of the App.
+I do not anticipate any need to internationalise an App essentially designed for a single family. However, as I live in Germany, and many potential testers of my app will be far more comfortable using the German language, any practicable beta version will need to be localized for such users. When the time comes to take that step, I will leverage Django's built-in i18n and l10n capabilities in a later iteration of the App.
 
 <!-- TOC --><a name="credits-and-sources"></a>
 ## Credits and sources
@@ -425,8 +448,11 @@ I used some code I found at [https://github.com/derlin/](https://derlin.github.i
 
 <!-- TOC --><a name="other-credits"></a>
 ### Other credits
-I would still like to thank my fellow students for their helpful suggestions and support, and in particular to my Student Welfare person, for their inspiration, encouragement and help in combatting impostor syndrome! But mainly for their patience.
+I would still like to thank my fellow students for their helpful suggestions and support, and in particular to my Student Care facilitator, for their inspiration, encouragement and help in combatting impostor syndrome! But mainly for their patience.
 
-Code Institute's excellent tutoring team also deserve a special mention for their help, which they have consistently given in an open, friendly, encouraging, knowledgeable and professional manner. Aside from my personal student care, I also have to thank the entire student care team for their flexibility ... and patience.
+My mentor, Oluwafemi Medale, deserves special praise and gratitude for jumping in at the last moment at very short notice to check over my project for obvious flaws.
 
-I also feel the need to thank you, my second project assessor, for your patience and understanding of both the complexity, overambition and imperfections of this project.
+Code Institute's excellent tutoring team also deserve a special mention for their help, which they have consistently given in an open, friendly, encouraging, knowledgeable and professional manner.
+
+
+I also feel the need to thank you, my third (and final) project assessor, for your patience and understanding of both the complexity, overambition and imperfections of this project. And for your sheer effort in putting yourself through this project, and especially its over-long readme file.
