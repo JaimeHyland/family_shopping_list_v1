@@ -11,7 +11,7 @@
         <h3 class="mx-3">Categories</h3>
       </div>
       <div class="row">
-        <form id="category-list-form" method="GET" action="" class="w-100">
+        <form id="category-list-form" method="get" action="" class="w-100">
           {% csrf_token %}
           <ul class="list-group list-group-flush mx-lg-3">
             {% for category in category_list %}
@@ -40,7 +40,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="add-category-form" method="POST" action="{% url 'add_category' %}">
+        <form id="add-category-form" method="post" action="{% url 'add_category' %}">
           {% csrf_token %}
           <div class="mb-3">
             <label for="category_name" class="form-label">Category name</label>
@@ -49,10 +49,9 @@
           <div class="mb-3">
             <label for="notes" class="form-label">Notes</label>
             <textarea class="form-control" id="notes" name="notes" placeholder="Enter a note if you want."></textarea>
-              {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.notes }}</option>
-              {% endfor %}
-            </select>
+            {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.notes }}</option>
+            {% endfor %}
           </div>
           <button type="submit" class="btn btn-primary">Add category</button>
         </form>
@@ -61,5 +60,4 @@
   </div>
 </div>
 
-<!--javascript to toggle filter disabled<->disabled: Runs any time a checkbox status is changed -->
 {% endblock %}

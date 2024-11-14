@@ -5,10 +5,9 @@
 
 {% block content %}
 
-
 {% if user|is_adult_filter %}
 <div class="product detail">
-    <form method="POST" action="" class="w-100">
+    <form method="post" action="" class="w-100">
         {% csrf_token %}
         <div class="form-group">
             <label for="product_name">Product:</label>

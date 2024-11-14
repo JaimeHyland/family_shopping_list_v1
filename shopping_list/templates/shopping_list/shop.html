@@ -3,15 +3,15 @@
 {% block content %}
 
 <div class="shop detail">
-    <form method="POST" action="" class="w-100">
+    <form method="post" action="" class="w-100">
         {% csrf_token %}
         <div class="form-group">
             <label for="shop_name">Shop:</label>
             <p class="mx-3">{{ form.shop_name }}</p>
         </div>
-        <div class="form-group"></div>
-        <label for="type_of_shop">Type of shop:</label>
-        <p class="mx-3">{{ form.type_of_shop }}</p>
+        <div class="form-group">
+            <label for="type_of_shop">Type of shop:</label>
+            <p class="mx-3">{{ form.type_of_shop }}</p>
         </div>
         <div class="form-group">
             <label for="notes">Notes:</label>

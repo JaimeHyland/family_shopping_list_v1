@@ -1,0 +1,2 @@
+[django-lint]
+disable = attribute-lowercase

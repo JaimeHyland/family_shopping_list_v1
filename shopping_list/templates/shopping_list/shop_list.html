@@ -37,7 +37,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="add-shop-form" method="POST" action="{% url 'add_shop' %}">
+        <form id="add-shop-form" method="post" action="{% url 'add_shop' %}">
           {% csrf_token %}
           <div class="mb-3">
             <label for="shop_name" class="form-label">Shop name</label>
@@ -57,7 +57,6 @@
               {% for shop in shops %}
                 <option value="{{ shop.id }}">{{ shop.notes }}</option>
               {% endfor %}
-            </select>
           </div>
           <button type="submit" class="btn btn-primary">Add shop</button>
         </form>

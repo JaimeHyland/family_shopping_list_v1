@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
 <div class="col-12 mt-3">
   <div class="row justify-content-center">
     <div class="col-lg-8">
@@ -10,7 +9,7 @@
         <h3 class="mx-3">Current shopping list</h3>
       </div>
       <div class="row">
-        <form id="shopping-list-form" method="POST" action="{% url 'shopping_list' %}" class="w-100">
+        <form id="shopping-list-form" method="post" action="{% url 'shopping_list' %}" class="w-100">
           {% csrf_token %}
           <!-- Input types are defined in javascript and parsed by ShoppingListView.post() -->
           <input type="hidden" id="item-id" name="item_id" value="">
@@ -25,8 +24,8 @@
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
                   <span class="{% if item.cancelled %}text-muted{% else %}bold-text{% endif %}">
-                    <a id="product-name" class="custom-link"
-                      href="{% url 'list_item' slug=item.slug %}" style="margin-left: 35px; flex-grow: 1; text-align: left;">
+                    <a id="product-name" class="custom-link product-name-style"
+                      href="{% url 'list_item' slug=item.slug %}">
                         {{ item.product.product_name }}
                     </a>
                   </span>

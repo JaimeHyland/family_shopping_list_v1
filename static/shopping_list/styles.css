@@ -55,6 +55,18 @@ a.custom-link.text-muted {
     text-decoration: none !important;
 }
 
+.toast-position {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.product-name-style {
+    margin-left: 35px;
+    flex-grow: 1;
+    text-align: left;
+}
+
 @media (max-width: 576px) {
     #product-name {
         margin-left: 20px !important;

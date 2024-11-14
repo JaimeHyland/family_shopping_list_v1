@@ -14,10 +14,10 @@
         {% else %}
         <button type="button" class="btn btn-close-white" data-bs-toggle="modal" data-bs-target="#addProductModal" disabled>Ask your parents to add a new product</button>
         {% endif %}
-        <h3 class="mx-3">Products</h1>
+        <h3 class="mx-3">Products</h3>
       </div>
       <div class="row">
-        <form id="product-list-form" method="POST" action="{% url 'add_to_shopping_list' %}" class="w-100">
+        <form id="product-list-form" method="post" action="{% url 'add_to_shopping_list' %}" class="w-100">
           {% csrf_token %}
           {% for category, product_list in grouped_products.items %}
             <!-- Category heading -->
@@ -55,7 +55,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="add-product-form" method="POST" action="{% url 'add_product' %}">
+        <form id="add-product-form" method="post" action="{% url 'add_product' %}">
           {% csrf_token %}
           <div class="mb-3">
             <label for="product_name" class="form-label">Product name</label>
@@ -104,8 +104,9 @@
       </div>
     </div>
   </div>
+  
   <!-- Toast for error notification -->
-  <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast" style="position: absolute; top: 20px; right: 20px;">
+  <div class="toast toast position align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
     <div class="d-flex">
       <div class="toast-body">
         {{ form.product_name.errors.0 }}
