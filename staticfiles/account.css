@@ -1,0 +1,14 @@
+button.btn-loginout,
+a.btn-loginout {
+    color: white;
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+button.btn-loginout:hover,
+a.btn-loginout:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}

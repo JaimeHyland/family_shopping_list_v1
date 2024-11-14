@@ -149,62 +149,74 @@
 
 <!--javascript to toggle add and delete buttons on product_list template to enabled<->disabled: Runs any time a checkbox status is changed -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const chkbxs = document.querySelectorAll('.add-or-delete');
-    const addBtn = document.getElementById('add-product-to-list');
-    const delBtn = document.getElementById('delete-product');
+    document.addEventListener('DOMContentLoaded', function() {
+        const chkbxs = document.querySelectorAll('.add-or-delete');
+        const addBtn = document.getElementById('add-product-to-list');
+        const delBtn = document.getElementById('delete-product');
     
-    // Enable add-product button if any checkbox is enabled, disable it otherwise
-    function toggleButtonState() {
-      if (addBtn && delBtn) {
-        const anythingChecked = Array.from(chkbxs).some(checkbox => checkbox.checked);
-        addBtn.disabled = !anythingChecked;
-        delBtn.disabled = !anythingChecked;
-      }
-    }
+        // Enable add-product btn if any chkbox is enabled, disable it otherwise
+        function toggleButtonState() {
+            if (addBtn && delBtn) {
+                const anythingChecked = Array
+                    .from(chkbxs)
+                    .some(checkbox => checkbox.checked);
+                addBtn.disabled = !anythingChecked;
+                delBtn.disabled = !anythingChecked;
+            }
+        }
 
-    if (chkbxs.length > 0) {
-        toggleButtonState();
-  
-        // Listen for changes on any checkbox
-        chkbxs.forEach(checkbox => {
-        checkbox.addEventListener('change', toggleButtonState);
-        });
-      }
+        if (chkbxs.length > 0) {
+            toggleButtonState();
+            // Listen for changes on any checkbox
+            chkbxs.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleButtonState);
+            });
+        }
     });
 </script>
 
+
 <!--javascript to run toast so that the user knows when a new product has failed to be saved 
-(because its name is identical to an existing one) -->
+(cos its name is identical to an existing one) -->
 {% if form.errors %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    // Only executed if there are errors in the form
-    var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-    errorToast.show();
+        // Only executed if there are errors in the form
+        var errorToast = new bootstrap.Toast(
+            document.getElementById('errorToast')
+        );
+        errorToast.show();
     });
 </script>
+
 {% endif %}
 {% endblock %}
 
 <script>
-    // Change presentation of list item texts when user changes cancelled or bought checkboxes to True.
-    document.addEventListener('DOMContentLoaded', function () {
+// Change presentation of list items when user turns cancelled or 
+// bought checkboxes to True.
+document.addEventListener('DOMContentLoaded', function () {
     const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
     const completedChkbxs = document.querySelectorAll('.completed-chkbx');
-    
+
     // loop through each cancel checkbox
     cancelChkbxs.forEach(function (checkbox) {
         // Record the checked or unchecked state of the checkbox
         checkbox.dataset.initialChecked = checkbox.checked;
-        // If a change of checked status is detected on any cancelled checkbox, if the checkbox
-        // is now checked, then add it mark it as cancelled in the db and disable the bought checkbox, 
-        // otherwise unmark it as cancelled in the db and enable the the bought checkbox.
+        // If a change of checked status is detected on any cancelled checkbox,
+        // if the checkbox is now checked, then mark it as cancelled in the db
+        // and disable the bought checkbox, otherwise unmark it as cancelled
+        // in the db and enable the the bought checkbox.
         checkbox.addEventListener('change', function () {
-            if (this.checked.toString() !== this.dataset.initialChecked === 'true'){
+            if (
+                this.checked.toString() !== this.dataset.initialChecked &&
+                this.dataset.initialChecked === 'true'
+            ) {
                 const listItem = this.closest('.list-group-item');
                 const productText = listItem.querySelector('span');
-                const completedChkbx = listItem.querySelector('.completed-chkbx');
+                const completedChkbx = listItem.querySelector(
+                    '.completed-chkbx'
+                );
 
                 if (this.checked) {
                     productText.classList.remove('bold-text');
@@ -223,12 +235,15 @@
     });
 
 
-    // Loop through each completed checkbox the process is similar to the one described above!
+    // Loop through each completed checkbox the process is similar to
+    // the one described above!
     completedChkbxs.forEach(function (checkbox) {
         checkbox.dataset.initialChecked = checkbox.checked;
 
         checkbox.addEventListener('change', function () {
-            if (this.checked.toString() !== this.dataset.initialChecked === 'true') {
+            if (
+                this.checked.toString() !== this.dataset.initialChecked &&
+                this.dataset.initialChecked === 'true') {
 
                 const listItem = this.closest('.list-group-item');
                 const productText = listItem.querySelector('span');
@@ -258,7 +273,9 @@ function getCSRFToken() {
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trim();
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
                 break;
             }
         }
@@ -269,14 +286,17 @@ function getCSRFToken() {
 function toggleCancelUncancel(checkbox, itemId) {
     
     if (checkbox.checked == true) {
-        if (confirm("Are you sure you don't want this item bought at this time after all?")) {
+        if (confirm(
+            "Are you sure you don't want this item bought this time after all?"
+        )) {
             checkbox.checked == true
             updateDatabase(checkbox, itemId);
-        } else 
+        } else  {
             checkbox.checked == false;
-			updateDatabase(checkbox, itemId);
+            updateDatabase(checkbox, itemId);
+        }
     } else {
-        if (confirm("Are you sure you want to reinstate this item to the shopping list?")) {
+        if (confirm("Are you sure you want to put this back on the list?")) {
             checkbox.checked == false;
             updateDatabase(checkbox, itemId);
         }
@@ -286,7 +306,8 @@ function toggleCancelUncancel(checkbox, itemId) {
 function updateDatabase(checkbox, itemId) {
     let action;
 
-    // identify action based on whether it's the cancelled or completed checkbox for the item
+    // identify action based on whether it's the cancelled
+    // or completed checkbox for the item.
     if (checkbox.name === 'cancelled_item') {
         action = checkbox.checked ? 'cancel' : 'uncancel';
     } else {
@@ -313,16 +334,16 @@ function submitForm() {
             'X-CSRFToken': getCSRFToken()
         },  
     })
-    .then(response => {
-        if (response.ok) {
-            console.log('Form submitted successfully');
-        } else {
-            console.error('Form submission failed', response.status);
-        }
-    })
-    .catch(error => {
-        console.error('Form submission error', error);
-    });
+    .then(response => {                                               // eslint-disable-line
+        if (response.ok) {                                            // eslint-disable-line
+            console.log('Form submitted successfully');               // eslint-disable-line
+        } else {                                                      // eslint-disable-line
+            console.error('Form submission failed', response.status); // eslint-disable-line
+        }                                                             // eslint-disable-line
+    })                                                                // eslint-disable-line
+    .catch(error => {                                                 // eslint-disable-line
+        console.error('Form submission error', error);                // eslint-disable-line
+    });                                                               // eslint-disable-line
 }
 
 function updateForm(itemId, action) {
@@ -342,9 +363,11 @@ socket.onmessage = function(event) {
     const cancelled = data.cancelled;
 
     // Find the item in the DOM and update it
-    const listItem = document.querySelector(`.list-group-item input[value='${listItemId}']`).closest('.list-group-item');
+    const listItem = document.querySelector(
+        `.list-group-item input[value='${listItemId}']`
+    ).closest('.list-group-item');
     
-    // Add a console error just in case the record for some reason no longer exists!
+    // Add a console error in case the record for some reason doesn't exist!
     if (!listItem) {
         console.error(`List item with ID ${listItemId} not found`);
         return;
