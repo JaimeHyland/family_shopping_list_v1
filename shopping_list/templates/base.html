@@ -195,75 +195,6 @@
 <script>
 // Change presentation of list items when user turns cancelled or 
 // bought checkboxes to True.
-document.addEventListener('DOMContentLoaded', function () {
-    const cancelChkbxs = document.querySelectorAll('.cancel-chkbx');
-    const completedChkbxs = document.querySelectorAll('.completed-chkbx');
-
-    // loop through each cancel checkbox
-    cancelChkbxs.forEach(function (checkbox) {
-        // Record the checked or unchecked state of the checkbox
-        checkbox.dataset.initialChecked = checkbox.checked;
-        // If a change of checked status is detected on any cancelled checkbox,
-        // if the checkbox is now checked, then mark it as cancelled in the db
-        // and disable the bought checkbox, otherwise unmark it as cancelled
-        // in the db and enable the the bought checkbox.
-        checkbox.addEventListener('change', function () {
-            if (
-                this.checked.toString() !== this.dataset.initialChecked &&
-                this.dataset.initialChecked === 'true'
-            ) {
-                const listItem = this.closest('.list-group-item');
-                const productText = listItem.querySelector('span');
-                const completedChkbx = listItem.querySelector(
-                    '.completed-chkbx'
-                );
-
-                if (this.checked) {
-                    productText.classList.remove('bold-text');
-                    productText.classList.add('text-muted');
-                    completedChkbx.disabled = true;
-                } else {
-                    productText.classList.remove('text-muted');
-                    productText.classList.add('bold-text');
-                    completedChkbx.disabled = false;
-                }
-                //update the database with value for cancel checkbox
-                updateDatabase(checkbox, listItem.dataset.itemId);
-                this.dataset.initialChecked = this.checked;
-            }
-        });
-    });
-
-
-    // Loop through each completed checkbox the process is similar to
-    // the one described above!
-    completedChkbxs.forEach(function (checkbox) {
-        checkbox.dataset.initialChecked = checkbox.checked;
-
-        checkbox.addEventListener('change', function () {
-            if (
-                this.checked.toString() !== this.dataset.initialChecked &&
-                this.dataset.initialChecked === 'true') {
-
-                const listItem = this.closest('.list-group-item');
-                const productText = listItem.querySelector('span');
-                const cancelChkbx = listItem.querySelector('.cancel-chkbx');
-
-                if (this.checked) {
-                    productText.classList.add('bought-text');
-                    cancelChkbx.disabled = true;
-                } else {
-                    productText.classList.remove('bought-text');
-                    cancelChkbx.disabled = false;
-                }
-                //update the database with value for bought checkbox
-                updateDatabase(checkbox, listItem.dataset.itemId);
-
-                this.dataset.initialChecked = this.checked;
-            }
-        });
-    });
-});
 
 function getCSRFToken() {
     let name = 'csrftoken';
@@ -305,7 +236,6 @@ function toggleCancelUncancel(checkbox, itemId) {
 
 function updateDatabase(checkbox, itemId) {
     let action;
-
     // identify action based on whether it's the cancelled
     // or completed checkbox for the item.
     if (checkbox.name === 'cancelled_item') {
@@ -396,6 +326,12 @@ socket.onmessage = function(event) {
         productText.classList.remove('bought-text');
         cancelChkbx.disabled = false;
         completedChkbx.checked = false;
+    }
+    // this is an improvisation to deal with a rather problematic issue in the html.
+    // It removes the text 'bold-text' from the class if that class also contains 'bought-text'.
+    // Not pretty, but necessary given the time constraints.
+    if (productText.classList.contains('bold-text') && productText.classList.contains('bought-text')) {
+        productText.classList.remove('bold-text');
     }
 };
 

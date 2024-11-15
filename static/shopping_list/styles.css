@@ -17,10 +17,10 @@
     color: #6c757d;
 }
 
-.bought-text {
-    text-decoration: line-through;
-    text-decoration-color: rgba(119,119,119, 30);
-    text-decoration-thickness: 2px;
+span.bought-text a {
+    text-decoration: line-through !important;
+    text-decoration-color: rgba(119,119,119, 30) !important;
+    text-decoration-thickness: 3px !important;
 }
 
 .nav-link.active {

@@ -23,7 +23,7 @@
             <li class="list-group-item d-flex align-items-center">
                 <input type="checkbox" class="cancel-chkbx" name="cancelled_item" value="{{ item.id }}"
                   {% if item.cancelled %} checked {% endif %} onchange="toggleCancelUncancel(this, '{{ item.id }}')">
-                  <span class="{% if item.cancelled %}text-muted{% else %}bold-text{% endif %}">
+                 <span class="{% if item.cancelled %}text-muted{% elif item.bought %}bought-text{% else %}bold-text{% endif %}">
                     <a id="product-name" class="custom-link product-name-style"
                       href="{% url 'list_item' slug=item.slug %}">
                         {{ item.product.product_name }}

@@ -221,7 +221,6 @@ ALLOWED_HOSTS = [
     'family-shopping-list-v1-bafe564ca613.herokuapp.com',                # host in the deployed environment
     ...
 ]
-
 ```
 
 The next step for someone completely new to Heroku would have been to create an account with Heroku at heroku.com, clicking on "Sign up for free" and filling out the sign-up form (using a genuine email address and with Role as Student and country as the country in which I currently live), and then clicking "Create free account". One would then need to confirm via the validation email sent by Heroku, set a password and log in, accepting Heroku's terms of service.  Heroku requires a real 16-digit credit or debit card for all its accounts and requires users to implement a minimum two-step validation process to use its hosting services. One then has to choose a form of validation. I originally chose a process in which a code number is sent to my smartphone every time I log in log-in via Salesforce's Authenticator app.
