@@ -1,10 +1,11 @@
-
 ![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
 # Family Shopper
 A bespoke shopping list management app developed especially for the Hyland family using Django and a variety of other technologies.
 
 Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the business logic used to control a centrally-owned dataset (in this case, the data used by the Hyland family to organise their household grocery shopping). Set up an authentication mechanism (for a superuser, an "adult" and a "child" role) and provide appropriate access to the site's data, and to alter that data, allowing each role to undertake activities appropriate to that role, based on the already existing dataset.
+
+![The App as seen on a mobile screen](/assets/documentation/shopping_list_homepage.png)
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
@@ -22,9 +23,19 @@ Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the 
    * [Marking list items as bought](#marking-list-items-as-bought)
    * [App database updates for checkbox changes](#app-database-updates-for-checkbox-changes)
 - [Design and coding philosophy and practice](#design-and-coding-philosophy-and-practice)
-   * [App robustness](#app-robustness)
-- [Bug fixes, linting, testing and UX](#bug-fixes-linting-testing-and-ux)
-   * [Linting](#linting)
+   * [Development, implementation and deployment environment](#development-implementation-and-deployment-environment)
+   * [App robustness in code](#app-robustness-in-code)
+- [Deployment to Heroku](#deployment-to-heroku)
+   * [Initial registration](#initial-registration)
+   * [Activating Code Institute's Heroku Student Pack](#activating-code-institutes-heroku-student-pack)
+   * [Setting up my App in the Heroku environment](#setting-up-my-app-in-the-heroku-environment)
+   * [Setting up Heroku for Daphne](#setting-up-heroku-for-daphne)
+   * [Static file management](#static-file-management)
+- [Running the app in the development environment](#running-the-app-in-the-development-environment)
+- [Bug fixes, linting, testing and UX feedback](#bug-fixes-linting-testing-and-ux-feedback)
+   * [Linting the Python](#linting-the-python)
+   * [Linting the HTML, CSS and JavaScript](#linting-the-html-css-and-javascript)
+   * [Linting config files.](#linting-config-files)
    * [Bugs and debugging](#bugs-and-debugging)
       + [Database debugging](#database-debugging)
       + [Debugging App logic](#debugging-app-logic)
@@ -36,7 +47,10 @@ Code Institute - Fourth Milestone Project: Build a Full-Stack site based on the 
    * [Time management](#time-management)
    * [Technical tools and technical issues resolved ](#technical-tools-and-technical-issues-resolved)
 - [Unresolved technical issues](#unresolved-technical-issues)
+   * [Issue with Chrome Developer Tools](#issue-with-chrome-developer-tools)
+   * [The elephant in the room](#the-elephant-in-the-room)
 - [Other design questions](#other-design-questions)
+   * [Hard-coded data](#hard-coded-data)
    * [Help functions](#help-functions)
    * [Text resources for i10n and l10n](#text-resources-for-i10n-and-l10n)
 - [Credits and sources](#credits-and-sources)
@@ -190,6 +204,7 @@ Clicking on any item text will bring the user to an *Item details* screen, where
 <!-- TOC --><a name="design-and-coding-philosophy-and-practice"></a>
 ## Design and coding philosophy and practice
 
+<!-- TOC --><a name="development-implementation-and-deployment-environment"></a>
 ### Development, implementation and deployment environment
 All the code created during this project was written using gitpod.io as my IDE, with version control using Git, storing (almost!) all code on a Github repository.
 
@@ -199,11 +214,12 @@ It was very early in the in the development process whein I moved my Apps very p
 
 The Debug setting was not hard set to No, but was instead handled by an environment variable (set to 'True' in the development environment via an env.py file and 'False' in production via a Heroku Config Var).  However, on the advice of my mentor, I have hardcoded the DEBUG value to False in version frozen for assessment.
 
-<!-- TOC --><a name="app-robustness"></a>
+<!-- TOC --><a name="app-robustness-in-code"></a>
 ### App robustness in code
 Aside from the usual error handling in the code; using *try, except, [finally]* structures, for example, perhaps the main protection against unhandled errors is the practice of strictly circumscribing what the user is allowed to do by the App. The vast majority of functions are limited to choices from a closed list or choosing boolean values via checkboxes, etc.. The main defence against any possible malicious use of the App is simply not allowing anyone but close family members (A further reassurance is that none of the family members are currently capable of mounting code injection attacks, or any other potential malicious attack on the App or its underlying database).
 
 
+<!-- TOC --><a name="deployment-to-heroku"></a>
 ## Deployment to Heroku
 
 <!-- TOC --><a name="initial-registration"></a>
@@ -235,7 +251,7 @@ To get the hours of server time I need from Heroku, I needed to activate Eco dyn
 Rather nicely, these Eco Dynos are designed go to sleep after a period of inactivity, so that I don't have to pay for server time that I'm not using.
 
 
-<!-- TOC --><a name="setting-up-our-app-in-the-heroku-environment"></a>
+<!-- TOC --><a name="setting-up-my-app-in-the-heroku-environment"></a>
 ### Setting up my App in the Heroku environment
 
 As this was not the first time I have used Heroku using the Student offer organised by Code Institute, I didn't have to go through the above complex rigmarole again. I simply logged into my personal Heroku dashboard using the above-described two-factor authentication process and created a new Heroku project using the "New" button on that dashboard, gave it the app name "family-shopping-list-v1", chose "Europe" as its region and then pressed "Create App". I then clicked on the "Settings" tab on the app page and clicked on "Reveal Config Vars". From there I created five configuration variables (Config Vars):
@@ -268,6 +284,7 @@ However, to be absolutely certain that I'm conforming to the standards expected 
 DEBUG = False
 ```
 
+<!-- TOC --><a name="setting-up-heroku-for-daphne"></a>
 ### Setting up Heroku for Daphne
 
 Instead of using gunicorn in the command to use the webserver, I have opted to use Django's Daphne toolset, which allows my program to run asynchronously using channel layers via the Channels add-on, also available within the Django toolset. Both packages are added to the list of INSTALLED_APPS in the settings file, and are naturally also listed in the requirements.txt file with the appropriate version numbers to ensure that they're installed correctly by Heroku in the deployed environment.
@@ -285,6 +302,7 @@ I chose the manual "Deploy branch" option and waited until the deployment was co
 
 I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I push the changes committed in Git to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my App.
 
+<!-- TOC --><a name="static-file-management"></a>
 ### Static file management
 All static files are stored in the deployment environment on cloudinary.
 
@@ -301,13 +319,30 @@ INSTALLED_APPS = [
 ]
 ```
 
-To ensure that static files are served efficiently from a single, well-defined subdirector, it is absolutely essential to run the following command to collect all static files into that directory:
+Aside from these details, it was also necessary to make the following settings so that cloudinary delivers its files effectively:
+
+```
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# For deployed project only
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Explicit reference to whitenoise recommended for Daphne-based apps.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_MIMETYPES = {'.webmanifest': 'application/manifest', }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+```
+
+To ensure that static files are served efficiently from a single, well-defined subdirectory from Cloudinary, it is absolutely essential to run the following command to collect all static files into that directory:
 
 ```
 python manage.py collectstatic
 ```
 
+A variety of other settings needed to be made to make Daphne run in deployment. Please look at the settings.py file to see the details.
 
+<!-- TOC --><a name="running-the-app-in-the-development-environment"></a>
 ## Running the app in the development environment
 
 Using the more usual ``runserver``-based command (``python manage.py runserver``) that we were taught can lead to issues in the development version of the app.
@@ -320,10 +355,10 @@ daphne family_shopping_list.asgi:application
 However, one issue that should be noted with this method of running the app is that it doesn't seem to check whether all migrations have been applied on startup, while the runserver-based command would give you a warning if you hadn't completed your migrations! For this reason, when using Daphne, it's particularly important to remember to migrate any changes in your models (or in Django's standard models) before deploying!
 
 
-<!-- TOC --><a name="bug-fixes-linting-testing-and-ux"></a>
+<!-- TOC --><a name="bug-fixes-linting-testing-and-ux-feedback"></a>
 ## Bug fixes, linting, testing and UX feedback
 
-<!-- TOC --><a name="linting"></a>
+<!-- TOC --><a name="linting-the-python"></a>
 ### Linting the Python
 All python code (aside from standard and/or boiler-plate code provided by Django and similar) has been linted and corrected using flake8. For development purposes, I altered flake8's ini settings (in the ``.flake8`` file in the project's root directory) to allow lines of up to 119 characters during development. For the purposes of this project, however, I temporarily set the maximum line length to 79, as required by the guidelines, and as advised by my mentor.
 
@@ -331,6 +366,7 @@ I saw fit to comment out several issues using the ``# noqa`` notation, mostly to
 
 While I strongly believe that the limit of 79 characters per line is excessively restrictive for python code readability in these days of larger, higher-resolution screens that often make much longer lines perfectly readable, I would be happy to reduce the standard number of characters per line to 79 if a client requires, especially if payment for my coding were being calculated according to the number of lines coded!
 
+<!-- TOC --><a name="linting-the-html-css-and-javascript"></a>
 ### Linting the HTML, CSS and JavaScript
 I did the linting in my HTML code (and only my HTML code &ndash;not the code provided by Django, even if slightly altered by me&ndash as that could be checked visually) using djlint, which was very useful in finding orphan closing nodes, etc.. The small bit of configuration that I did can be seen in the .djlint file on the root directory.
 
@@ -342,6 +378,7 @@ You can see the configuration file on the project's root directory: ``.eslint.co
 
 I discovered a bug in the ESLint's default configuration: in one piece of code (``fetch .then .catch`` structure) the linter demanded one tab more than is appropriate on each line from the ``.then`` keyword until the end of the structure. I dealt with this issue with a baseball bat: I simply marked each affected line of code with an instruction for the linter to ignore them (``// eslint-disable-line``) &ndash;an ugly but exceptional solution.
 
+<!-- TOC --><a name="linting-config-files"></a>
 ### Linting config files.
 The only reason I had to include the lint configuration files in my github repo was to facilitate the assessors of this project. I would normally simply keep such files locally on my personal coding notes and exclude them from the commit process by naming them in the .gitignore file. Given the choice, I would also allow lines much longer than the standard 79-80. I consider 119-character lines perfectly readable on modern screens.
 
@@ -435,6 +472,7 @@ Among many lessons I managed through blood, sweat and tears to learn from were t
 <!-- TOC --><a name="unresolved-technical-issues"></a>
 ## Unresolved technical issues
 
+<!-- TOC --><a name="issue-with-chrome-developer-tools"></a>
 ### Issue with Chrome Developer Tools
 A strange error appeared for a period on the console in Chrome when Developer Tools is open. It only occurred on the deployed environment (in Heroku). Chrome appeared to cut the App off from the Internet when I do anything on the web page that involves any POST to the database. The relevant errors were as follows:
 ```
@@ -457,6 +495,7 @@ It took significant time to realise that the root of the problem lay with the Ch
 
 In any case the issue has since disappeared (I suspect the most recent Chrome update sorted it out).
 
+<!-- TOC --><a name="the-elephant-in-the-room"></a>
 ### The elephant in the room
 Aside from this, the major unresolved technical issue is my failure to create an effective notification system for multiple users using Django.channels and WebSockets. The result of this issue is that the deployed version of the App fails to update the shopping list page of other users working on the App in real time when a list item is bought, unbought, cancelled or uncancelled. It was for this functionality that I decided (overambitiously) to use websockets via Daphne and Channels. AS A RESULT OF THIS CONTINUING ISSUE, CLASHES IN DATA STATES MAY OCCUR WHEN TWO INSTANCES OF THE APP ARE USED AT THE SAME TIME. 
 
@@ -466,6 +505,7 @@ I will be working on achieving the goal of achieving onscreen realtime multi-use
 <!-- TOC --><a name="other-design-questions"></a>
 ## Other design questions
 
+<!-- TOC --><a name="hard-coded-data"></a>
 ### Hard-coded data
 Some of the data used by the app is for reasons of simplicity hard-coded at the development stage. One example of such data is the list of shop types (TYPES_OF_SHOP) used by the program, which is hard-coded into the Models.py file. This list (and any other hard-coded data) may be integrated into an appropriate data table in a future iteration, depending on early user feedback.
 
