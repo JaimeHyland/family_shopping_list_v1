@@ -283,7 +283,14 @@ Once all the above-described steps were completed, I switched to the Deploy tab 
 
 I chose the manual "Deploy branch" option and waited until the deployment was complete. When that was done, I clicked on the "Open app" button, which opened the family-shopping-list App in a new tab on the same browser. I could then run a smoke test to ensure that everything was working in the deployed environment in a similar way to my last committed version of the App in development.
 
-I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I push the changes committed in Git to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my App. 
+I then chose to enable automatic deploy from the main branch of my repository. This causes the deployment steps that I have defined as described above to run automatically every time I push the changes committed in Git to Github, ensuring (unless a deployment error occurs) that the deployed environment always contains the latest version of my App.
+
+### Static file management
+To ensure that static files are served efficiently from a single, well-defined subdirector, it is absolutely essential to run the following command to collect all static files into that directory:
+
+```
+python manage.py collectstatic
+```
 
 
 ## Running the app in the development environment

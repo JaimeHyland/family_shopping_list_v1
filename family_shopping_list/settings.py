@@ -13,18 +13,18 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-import env 
+# import env 
 
 # The following lines have been deliberately commented out for assessment purposes.
-# if os.path.isfile('env.py'):
-#   import env # noqa
+if os.path.isfile('env.py'):
+  import env # noqa
 
-# DEBUG = os.environ.get('DEBUG')
+DEBUG = os.environ.get('DEBUG')
 
 # SECURITY: this setting ensures that env. settings use the env.py file in dev
 # (where env.py is present) & the config vars set on the host after deployment!
 
-DEBUG = False
+# DEBUG = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
