@@ -15,7 +15,7 @@ import os
 import dj_database_url
 # import env 
 
-# The following lines do not successfully instruct Django to 
+# The following code does not successfully instruct Django to 
 # reading the host's 'DEBUG'  config var. They are, however, 
 # needed to let Django read all the other config vars.
 if os.path.isfile('env.py'):
