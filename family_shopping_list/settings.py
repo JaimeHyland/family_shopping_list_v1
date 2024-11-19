@@ -15,16 +15,13 @@ import os
 import dj_database_url
 # import env 
 
-# The following lines have been deliberately commented out for assessment purposes.
+# The following lines do not successfully instruct Django to 
+# reading the host's 'DEBUG'  config var. They are, however, 
+# needed to let Django read all the other config vars.
 if os.path.isfile('env.py'):
   import env # noqa
 
-DEBUG = os.environ.get('DEBUG')
-
-# SECURITY: this setting ensures that env. settings use the env.py file in dev
-# (where env.py is present) & the config vars set on the host after deployment!
-
-# DEBUG = False
+DEBUG = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

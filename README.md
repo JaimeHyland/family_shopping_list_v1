@@ -189,7 +189,6 @@ The right-hand checkbox marks its associated list item as having been bought. In
 <!-- TOC --><a name="app-database-updates-for-checkbox-changes"></a>
 ### App database updates for checkbox changes
 Changes to the checkboxes are written directly and immediately to the database. I intend to complete a notification system using Django Channels and WebSockets to ensure that users are informed when someone else has updated data currently on their screen, to minimise the risk of data becoming inconsistent due to parallel usage of the app.
-
 They should also see several buttons:
 - a button inviting the user to add an item to the shopping list
 - a button inviting the user to filter/or group shopping list items either by category or by shop (not yet implemented)
@@ -255,9 +254,9 @@ Rather nicely, these Eco Dynos are designed go to sleep after a period of inacti
 ### Setting up my App in the Heroku environment
 
 As this was not the first time I have used Heroku using the Student offer organised by Code Institute, I didn't have to go through the above complex rigmarole again. I simply logged into my personal Heroku dashboard using the above-described two-factor authentication process and created a new Heroku project using the "New" button on that dashboard, gave it the app name "family-shopping-list-v1", chose "Europe" as its region and then pressed "Create App". I then clicked on the "Settings" tab on the app page and clicked on "Reveal Config Vars". From there I created five configuration variables (Config Vars):
-- CLOUDINARY_URL: the URL of the cloudinary environment from where Heroku will obtain the static files used by the deployed app
+- CLOUDINARY_URL: the URL of the cloudinary environment from where Heroku will obtain the static files used by the deployed app, if there are any
 - DATABASE_URL: where my postgres database makes its home
-- DEBUG: set at 0 to prevent public access to detailed debugging information, which might allow hackers to reverse engineer my code for nefarious purposes.
+- DEBUG: set at 0 to prevent public access to detailed debugging information, which might allow hackers to reverse engineer my code for nefarious purposes. This functionality is buggy and is not used in the final project
 - SECRET_KEY: this key is required in order to protect a number of security-critical Django processes, including, but not limited to the generation of CSRF tokens
 - DISABLE_COLLECTSTATIC: initially set to 1, later changed to 0
 
@@ -268,7 +267,7 @@ Three of these configuration variables have an equivalent in the env.py file in 
 - DEBUG 
 - SECRET_KEY
 
-The values of DATABASE_URL and SECRET_KEY in the env.py file are identical to their equivalents in the Heroku config vars. However, the DEBUG variable is set to 'True' in env.py so that I as the developer can see a detailed description of errors in my code while working. For reasons of security, the file is excluded from Git version management, and therefore does not get written to the deployed environment, as it is designed for use only in development. A simply piece of code in the settings.py file ensures that the deployed app searches Heroko's Config Vars rather than looking for the absent env.py file:
+The values of DATABASE_URL and SECRET_KEY in the env.py file are identical to their equivalents in the Heroku config vars. However, the DEBUG variable is set to 'True' in env.py so that I as the developer can see a detailed description of errors in my code while working. For reasons of security, the file is excluded from Git version management, and therefore does not get written to the deployed environment, as it is designed for use only in development. A simply piece of code in the settings.py file  should ensure that the deployed app searches Heroko's Config Vars rather than looking for the absent env.py file:
 ```
 if os.path.isfile('env.py'):
     import env
@@ -276,13 +275,21 @@ if os.path.isfile('env.py'):
 DEBUG = os.environ.get('DEBUG')
 ```
 
-This approach prevents me from having to remember to manually change True to False in my code every time I commit and deploy a new version of my app to Heroku, and thus obviates the danger of hackers using detailed error messages to analyse my code for nefarious purposes.
+This approach should prevent me from having to remember to manually change True to False in my code every time I commit and deploy a new version of my app to Heroku, and thus obviates the danger of hackers using detailed error messages to analyse my code for nefarious purposes.
 
-However, to be absolutely certain that I'm conforming to the standards expected of us programmers by the project assessment criteria, I have removed these two code snippets and replaced them with this simple line:
+However, the code is not reading the Heroku config var correctly (an issue that I discovered very late in development due to a late and unexpected bug that crept into my code during linting), so to be sure that I'm conforming to the standards expected of us programmers by the project assessment criteria, I have replaced:
+
+```
+DEBUG = os.environ.get('DEBUG')
+```
+
+with
 
 ```
 DEBUG = False
 ```
+
+I hope to reinstate the conditional DEBUG logic in a later iteration of the project.
 
 <!-- TOC --><a name="setting-up-heroku-for-daphne"></a>
 ### Setting up Heroku for Daphne
@@ -334,7 +341,7 @@ WHITENOISE_MIMETYPES = {'.webmanifest': 'application/manifest', }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 ```
 
-To ensure that static files are served efficiently from a single, well-defined subdirectory from Cloudinary, it is absolutely essential to run the following command to collect all static files into that directory:
+To ensure that static files are served efficiently in the deployed app from a single, well-defined subdirectory, I ran the following command to collect all static files into that directory:
 
 ```
 python manage.py collectstatic
