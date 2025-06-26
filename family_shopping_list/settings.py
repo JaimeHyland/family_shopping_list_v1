@@ -30,6 +30,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 load_dotenv()
 
+# Read DEBUG environment variable as string; default to 'False' if not set
+debug_env = os.environ.get('DEBUG', 'False')
+# Convert to boolean: 'True' (string) becomes True (bool), else False
+DEBUG = debug_env.lower() == 'true'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
