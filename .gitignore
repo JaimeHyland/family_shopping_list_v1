@@ -6,6 +6,8 @@ __pycache__/
 *.py[cod]
 node_modules/
 .github/
+venv/
 .env
 cloudinary_python.txt
 .data/fixtures.json
+.env
